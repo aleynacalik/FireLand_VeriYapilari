@@ -1,5 +1,7 @@
+all: program
+
 program: main modul1 modul2
-	g++ ./lib/main.o ./lib/modul1_kayit.o ./lib/modul2_gunluk.o -o ./bin/program
+	g++ ./lib/main.o ./lib/modul1_kayit.o ./lib/modul2_gunluk.o -o ./bin/program.exe
 
 main:
 	g++ -I "include" -c main.cpp -o ./lib/main.o
@@ -10,5 +12,8 @@ modul1:
 modul2:
 	g++ -I "include" -c ./src/modul2_gunluk.cpp -o ./lib/modul2_gunluk.o
 
+run:
+	.\bin\program.exe
+
 clean:
-	del lib\*.o bin\program.exe
+	del /Q lib\*.o bin\program.exe0
