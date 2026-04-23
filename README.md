@@ -24,10 +24,10 @@ eduflow/
 ## Derleme ve Çalıştırma
 
 ```bash
-make              # Derle
-./bin/program     # Çalıştır (Linux/Mac)
-bin\program.exe   # Çalıştır (Windows)
-make clean        # Temizle
+mingw32-make              # Derle
+make run     # Çalıştır (Linux/Mac)
+mingw32-make run   # Çalıştır (Windows)
+mingw32-make clean        # Temizle
 ```
 
 ## Modüller
