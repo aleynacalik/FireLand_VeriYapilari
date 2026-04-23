@@ -25,8 +25,8 @@ eduflow/
 
 ```bash
 mingw32-make              # Derle
-make run     # Çalıştır (Linux/Mac)
-mingw32-make run   # Çalıştır (Windows)
+make run                  # Çalıştır (Linux/Mac)
+mingw32-make run          # Çalıştır (Windows)
 mingw32-make clean        # Temizle
 ```
 
