@@ -6,12 +6,16 @@
  * ISE 106 - Veri Yapıları Projesi
  * Modül 1: Ana Kayıt Yönetimi (Tek Yönlü Bağlı Liste)
  * Modül 2: Operasyon Günlüğü (Çift Yönlü Dairesel Bağlı Liste)
+ * Modül 3: Stack Modülü
+ * Modül 4: Talep Yönetim Modülü (Queue)
  */
 
 #include <iostream>
 #include <string>
 #include "include/modul1_kayit.h"
 #include "include/modul2_gunluk.h"
+#include "include/modul3_stack.h"
+#include "include/modul4_queue.h"
 
 using namespace std;
 
@@ -39,6 +43,8 @@ void anaMenuGoster() {
     cout << "-----------------------------------------------" << endl;
     cout << "16. Demo Veriler Ekle" << endl;
     cout << "17. Tum Kayitlari Detayli Goster" << endl;
+    cout << "18. Modul 3 Islevsellikleri" << endl;
+    cout << "19. Modul 4 Islevsellikleri" << endl;
     cout << "0.  Cikis" << endl;
     cout << "===============================================" << endl;
     cout << "Seciminiz: ";
@@ -48,12 +54,15 @@ int main() {
     // Liste başlangıçları
     Kayit* kayitBas = NULL;
     LogKaydi* logBas = NULL;
+    StackIslem* stackUst = NULL;
+    Talep* talepBas = NULL;
+    int sonIslenenLogID = 0;
     
     // Değişkenler
     int secim;
     string baslik, kategori, eskiBaslik, yeniBaslik, yeniKategori, not_, tarih1, tarih2;
     float boyut, puan, yeniBoyut;
-    int id, oncelikInt, islemInt;
+    int id, oncelikInt, islemInt, altSecim;
     Oncelik oncelik;
     
     // Hoşgeldin mesajı
@@ -170,6 +179,91 @@ int main() {
             case 17: // Tüm Kayıtları Detaylı Göster
                 tumKayitlariListele(kayitBas);
                 break;
+
+            case 18: // Modul 3 Islevsellikleri
+                do {
+                    cout << "\n===== MODUL 3 ISLEVSELLIKLERI (STACK) =====" << endl;
+                    cout << "1. Islem push (loglardan stack guncelle)" << endl;
+                    cout << "2. Undo (pop)" << endl;
+                    cout << "3. Stack derinligi" << endl;
+                    cout << "4. Son 10 islemi goster" << endl;
+                    cout << "5. En sik islem turu analizi" << endl;
+                    cout << "0. Ana menuye don" << endl;
+                    cout << "Seciminiz: ";
+                    cin >> altSecim;
+                    cin.ignore();
+
+                    switch (altSecim) {
+                        case 1:
+                            loglardanStackGuncelle(&stackUst, logBas, &sonIslenenLogID);
+                            break;
+                        case 2:
+                            undoPop(&stackUst, &kayitBas, &logBas);
+                            break;
+                        case 3:
+                            cout << "[STACK] Derinlik: " << stackDerinligi(stackUst) << endl;
+                            break;
+                        case 4:
+                            son10IslemiGoster(stackUst);
+                            break;
+                        case 5:
+                            enSikIslemTuruAnalizi(stackUst);
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            cout << "[HATA] Gecersiz secim!" << endl;
+                    }
+                } while (altSecim != 0);
+                break;
+
+            case 19: // Modul 4 Islevsellikleri
+                do {
+                    cout << "\n===== MODUL 4 ISLEVSELLIKLERI (QUEUE) =====" << endl;
+                    cout << "1. Yeni talep ekle" << endl;
+                    cout << "2. Oncelikli talep olustur" << endl;
+                    cout << "3. Kuyrugu listele" << endl;
+                    cout << "4. Ilk talebi isleme al (dequeue -> Modul 1)" << endl;
+                    cout << "5. Ortalama bekleme suresi" << endl;
+                    cout << "0. Ana menuye don" << endl;
+                    cout << "Seciminiz: ";
+                    cin >> altSecim;
+                    cin.ignore();
+
+                    switch (altSecim) {
+                        case 1:
+                            cout << "Baslik: "; getline(cin, baslik);
+                            cout << "Kategori: "; getline(cin, kategori);
+                            cout << "Boyut (KB): "; cin >> boyut;
+                            cout << "Oncelik (0=Dusuk, 1=Orta, 2=Yuksek): "; cin >> oncelikInt;
+                            cout << "Ortalama Puan (0-5): "; cin >> puan;
+                            cin.ignore();
+                            yeniTalepEkle(&talepBas, kategori, boyut, (Oncelik)oncelikInt, baslik, puan);
+                            break;
+                        case 2:
+                            cout << "Baslik: "; getline(cin, baslik);
+                            cout << "Kategori: "; getline(cin, kategori);
+                            cout << "Boyut (KB): "; cin >> boyut;
+                            cout << "Ortalama Puan (0-5): "; cin >> puan;
+                            cin.ignore();
+                            oncelikliTalepOlustur(&talepBas, kategori, boyut, baslik, puan);
+                            break;
+                        case 3:
+                            kuyruguListele(talepBas);
+                            break;
+                        case 4:
+                            ilkTalebiIslemeAl(&talepBas, &kayitBas, &logBas, &stackUst);
+                            break;
+                        case 5:
+                            ortalamaBeklemeSuresiDakika(talepBas);
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            cout << "[HATA] Gecersiz secim!" << endl;
+                    }
+                } while (altSecim != 0);
+                break;
                 
             case 0: // Çıkış
                 cout << "\nProgram sonlandiriliyor..." << endl;
@@ -184,6 +278,8 @@ int main() {
     // Bellek temizliği
     listeTemizle(kayitBas);
     listeTemizleLog(logBas);
+    stackTemizle(stackUst);
+    kuyrukTemizle(talepBas);
     
     cout << "Gule gule!" << endl;
     return 0;
