@@ -8,6 +8,8 @@
  * Modül 2: Operasyon Günlüğü (Çift Yönlü Dairesel Bağlı Liste)
  * Modül 3: Stack Modülü
  * Modül 4: Talep Yönetim Modülü (Queue)
+ * Modül 5: Tarih Bazlı Filtreleme ve Analiz (Binary Search Tree)
+ * Modül 6: Hash Analiz Motoru (Hash Tablosu)
  */
 
 #include <iostream>
@@ -16,6 +18,9 @@
 #include "include/modul2_gunluk.h"
 #include "include/modul3_stack.h"
 #include "include/modul4_queue.h"
+#include "include/modul5_tree.h"
+#include "include/modul6_hash.h"
+
 
 using namespace std;
 
@@ -45,6 +50,9 @@ void anaMenuGoster() {
     cout << "17. Tum Kayitlari Detayli Goster" << endl;
     cout << "18. Modul 3 Islevsellikleri" << endl;
     cout << "19. Modul 4 Islevsellikleri" << endl;
+    cout << "20. Modul 5 Tree Islevsellikleri" << endl;
+    cout << "21. Modul 6 Hash Islevsellikleri" << endl;
+    cout << "===============================================" << endl;
     cout << "0.  Cikis" << endl;
     cout << "===============================================" << endl;
     cout << "Seciminiz: ";
@@ -58,11 +66,18 @@ int main() {
     Talep* talepBas = NULL;
     int sonIslenenLogID = 0;
     
+    // Ağaç yapıları
+    AgacDugumu* tarihAgaci = NULL;
+    AgacDugumu* oncelikAgaci = NULL;
+    
+    // Hash Tablosu
+    HashTablosu* hashTablosu = NULL;
+    
     // Değişkenler
     int secim;
     string baslik, kategori, eskiBaslik, yeniBaslik, yeniKategori, not_, tarih1, tarih2;
-    float boyut, puan, yeniBoyut;
-    int id, oncelikInt, islemInt, altSecim;
+    float boyut, puan, yeniBoyut, minPuan, maxPuan;
+    int id, oncelikInt, islemInt, altSecim, yil, sayac;
     Oncelik oncelik;
     
     // Hoşgeldin mesajı
@@ -264,7 +279,166 @@ int main() {
                     }
                 } while (altSecim != 0);
                 break;
-                
+
+            // ========== MODUL 5: TREE ==========
+            case 20:
+                do {
+                    cout << "\n===== MODUL 5 TREE Islevsellikleri =====" << endl;
+                    cout << "1. Tarihe gore agac olustur ve listele" << endl;
+                    cout << "2. Oncelik gore agac olustur ve listele" << endl;
+                    cout << "3. Puan araligi filtreleme" << endl;
+                    cout << "4. Agac yuksekligi ve performans bilgisi" << endl;
+                    cout << "5. Tarih bazli trend analizi" << endl;
+                    cout << "0. Ana menuye don" << endl;
+                    cout << "Seciminiz: ";
+                    cin >> altSecim; cin.ignore();
+ 
+                    switch (altSecim) {
+                        case 1:
+                            if (kayitBas == NULL) {
+                                cout << "[BILGI] Kayit listesi bos. Once kayit ekleyin." << endl;
+                                break;
+                            }
+                            if (tarihAgaci != NULL) { agacTemizle(tarihAgaci); tarihAgaci = NULL; }
+                            tarihAgaci = tariheGoreAgacOlustur(kayitBas);
+                            {
+                                int altAlt;
+                                cout << "\n--- TARIH AGACI SECENEKLERI ---" << endl;
+                                cout << "1. Tum kayitlari eskiden yeniye listele" << endl;
+                                cout << "2. Yil/ay bazli filtrele" << endl;
+                                cout << "Seciminiz: ";
+                                cin >> altAlt; cin.ignore();
+                                if (altAlt == 1) {
+                                    cout << "\n========== TARIH AGACI (Eskiden Yeniye) ==========" << endl;
+                                    cout << "  [Tarih]       ID   Baslik  (Kategori)  [Oncelik]" << endl;
+                                    cout << "--------------------------------------------------" << endl;
+                                    tariheGoreAgacListele(tarihAgaci);
+                                    cout << "==================================================" << endl;
+                                } else if (altAlt == 2) {
+                                    tariheGoreFiltrele(tarihAgaci);
+                                }
+                            }
+                            break;
+ 
+                        case 2:
+                            if (kayitBas == NULL) {
+                                cout << "[BILGI] Kayit listesi bos. Once kayit ekleyin." << endl;
+                                break;
+                            }
+                            if (oncelikAgaci != NULL) { agacTemizle(oncelikAgaci); oncelikAgaci = NULL; }
+                            oncelikAgaci = onceligeGoreAgacOlustur(kayitBas);
+                            onceligeGoreAgacYazdir(oncelikAgaci);
+                            break;
+ 
+                        case 3:
+                            if (kayitBas == NULL) {
+                                cout << "[BILGI] Kayit listesi bos. Once kayit ekleyin." << endl;
+                                break;
+                            }
+                            cout << "\n--- PUAN BST FILTRELEME ---" << endl;
+                            cout << "Minimum Puan (0.0 - 5.0): "; cin >> minPuan;
+                            cout << "Maksimum Puan (0.0 - 5.0): "; cin >> maxPuan;
+                            cin.ignore();
+                            puanAraligiFiltrele(kayitBas, minPuan, maxPuan);
+                            break;
+ 
+                        case 4:
+                            if (tarihAgaci == NULL && kayitBas != NULL) {
+                                tarihAgaci = tariheGoreAgacOlustur(kayitBas);
+                                cout << "[BILGI] Performans icin tarih agaci otomatik olusturuldu." << endl;
+                            }
+                            agacPerformansBilgisi(tarihAgaci);
+                            break;
+ 
+                        case 5:
+                            cout << "\n--- TARIH BAZLI TREND ANALIZI ---" << endl;
+                            cout << "Esik Yil (ornek: 2020, 2023): "; cin >> yil;
+                            cin.ignore();
+                            tarihBazliTrendAnalizi(kayitBas, yil);
+                            break;
+ 
+                        case 0: break;
+                        default: cout << "[HATA] Gecersiz secim!" << endl;
+                    }
+                } while (altSecim != 0);
+                break;
+            
+            // ========== MODUL 6: HASH ANALIZ MOTORU ==========
+            case 21:
+                do {
+                    cout << "\n===== MODUL 6 HASH ANALIZ MOTORU =====" << endl;
+                    cout << "1. Hash tablosu olustur" << endl;
+                    cout << "2. ID'ye gore ortalama puani bul" << endl;
+                    cout << "3. Kategoriye gore kayit sayisini bul" << endl;
+                    cout << "4. Tum kategorileri analiz et" << endl;
+                    cout << "5. Oncelik bazli yogunluk analizi" << endl;
+                    cout << "6. Hash tablo performans bilgisi" << endl;
+                    cout << "0. Ana menuye don" << endl;
+                    cout << "Seciminiz: ";
+                    cin >> altSecim; cin.ignore();
+                    
+                    switch (altSecim) {
+                        case 1:
+                            if (kayitBas == NULL) {
+                                cout << "[BILGI] Kayit listesi bos. Once kayit ekleyin." << endl;
+                                break;
+                            }
+                            if (hashTablosu != NULL) { hashTablosuTemizle(hashTablosu); hashTablosu = NULL; }
+                            hashTablosu = hashTablosuOlustur(kayitBas);
+                            cout << "[BILGI] Hash tablosu olusturuldu (boyut: " << HASH_BOYUTU << ")" << endl;
+                            break;
+                        
+                        case 2:
+                            if (hashTablosu == NULL) {
+                                cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
+                                break;
+                            }
+                            cout << "\nKayit ID girin: "; cin >> id;
+                            cin.ignore();
+                            idyeGoreOrtalamaPuanBul(hashTablosu, id);
+                            break;
+                        
+                        case 3:
+                            if (hashTablosu == NULL) {
+                                cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
+                                break;
+                            }
+                            cout << "\nKategori (Yazilim/Tasarim/Isletme/Dil/Muzik): ";
+                            getline(cin, kategori);
+                            sayac = kategoriyeSayiBul(hashTablosu, kategori);
+                            cout << "[BILGI] '" << kategori << "' kategorisinde " << sayac << " kayit var." << endl;
+                            break;
+                        
+                        case 4:
+                            if (hashTablosu == NULL) {
+                                cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
+                                break;
+                            }
+                            tumKategorileriAnaliz(hashTablosu);
+                            break;
+                        
+                        case 5:
+                            if (hashTablosu == NULL) {
+                                cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
+                                break;
+                            }
+                            onceligeGoreYogunlukAnalizi(hashTablosu);
+                            break;
+                        
+                        case 6:
+                            if (hashTablosu == NULL) {
+                                cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
+                                break;
+                            }
+                            hashPerformansBilgisi(hashTablosu);
+                            break;
+                        
+                        case 0: break;
+                        default: cout << "[HATA] Gecersiz secim!" << endl;
+                    }
+                } while (altSecim != 0);
+                break;
+
             case 0: // Çıkış
                 cout << "\nProgram sonlandiriliyor..." << endl;
                 break;
@@ -280,7 +454,10 @@ int main() {
     listeTemizleLog(logBas);
     stackTemizle(stackUst);
     kuyrukTemizle(talepBas);
+    if (tarihAgaci   != NULL) agacTemizle(tarihAgaci);
+    if (oncelikAgaci != NULL) agacTemizle(oncelikAgaci);
+    if (hashTablosu  != NULL) hashTablosuTemizle(hashTablosu);
     
-    cout << "Gule gule!" << endl;
+    cout << "Bay bay!" << endl;
     return 0;
 }
