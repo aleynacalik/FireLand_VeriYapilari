@@ -75,6 +75,9 @@ bool tarihGecerliMi(string tarih) {
     if (ay < 1 || ay > 12) {
         return false;
     }
+    
+
+    
     return true;
 }
 
