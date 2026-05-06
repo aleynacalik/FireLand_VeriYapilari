@@ -1,6 +1,7 @@
 
 
 #include "../include/modul2_gunluk.h"
+#include "../include/modul1_kayit.h"
 
 
 int sonLogID = 0;
@@ -46,15 +47,16 @@ bool tarihGecerliMi(string tarih) {
     if (tarih.length() != 10) {
         return false;
     }
-    
-    // "/" karakterleri doğru yerde mi
-    if (tarih[2] != '/' || tarih[5] != '/') {
+
+    // Ayraç "/" veya "." olabilir; ikisi de tutarli olmali
+    char ayrac = tarih[2];
+    if ((ayrac != '/' && ayrac != '.') || tarih[5] != ayrac) {
         return false;
     }
 
 
     for (int i = 0; i < 10; i++) {
-        if (i == 2 || i == 5) continue; // "/" karakterleri
+        if (i == 2 || i == 5) continue; // ayrac karakterleri
         if (tarih[i] < '0' || tarih[i] > '9') {
             return false;
         }
@@ -82,11 +84,13 @@ bool tarihGecerliMi(string tarih) {
 }
 
 
+// "GG/AA/YYYY" -> "YYYYAAGG" (string olarak doğru karşılaştırılır)
+string tarihiKarsilastirmaFormatina(string tarih) {
+    return tarih.substr(6, 4) + tarih.substr(3, 2) + tarih.substr(0, 2);
+}
+
 bool tarihSiralamaGecerliMi(string tarih1, string tarih2) {
-    
-    string t1 = tarih1.substr(6, 4) + tarih1.substr(3, 2) + tarih1.substr(0, 2);
-    string t2 = tarih2.substr(6, 4) + tarih2.substr(3, 2) + tarih2.substr(0, 2);
-    return t1 <= t2;
+    return tarihiKarsilastirmaFormatina(tarih1) <= tarihiKarsilastirmaFormatina(tarih2);
 }
 
 // ==================== 5 İŞLEVSELLİK ====================
@@ -187,16 +191,18 @@ void tarihAraligiIslemler(LogKaydi* bas, string baslangic, string bitis) {
     }
     
     cout << "\n========== " << baslangic << " - " << bitis << " ARASI ==========" << endl;
-    
+
+    string baslangicKarsi = tarihiKarsilastirmaFormatina(baslangic);
+    string bitisKarsi = tarihiKarsilastirmaFormatina(bitis);
+
     LogKaydi* iter = bas;
     int bulunan = 0;
-    
+
     do {
-  
-        string tarih = iter->tarihSaat.substr(0, 10);
-        if (tarih >= baslangic && tarih <= bitis) {
-            cout << "[" << iter->tarihSaat << "] " 
-                 << islemToString(iter->islemTuru) 
+        string logTarih = tarihiKarsilastirmaFormatina(iter->tarihSaat.substr(0, 10));
+        if (logTarih >= baslangicKarsi && logTarih <= bitisKarsi) {
+            cout << "[" << iter->tarihSaat << "] "
+                 << islemToString(iter->islemTuru)
                  << " - Kayit ID: " << iter->kayitID << endl;
             bulunan++;
         }
@@ -210,16 +216,16 @@ void tarihAraligiIslemler(LogKaydi* bas, string baslangic, string bitis) {
 }
 
 
-void gunlukRaporuOlustur(LogKaydi* bas) {
+void gunlukRaporuOlustur(LogKaydi* bas, Kayit* kayitBas) {
     if (bas == NULL) {
         cout << "[BILGI] Gunluk bos." << endl;
         return;
     }
-    
-  
+
+    // 1. İşlem türü ve sıklık
     int toplam = 0;
     int ekleSayisi = 0, silSayisi = 0, guncelleSayisi = 0, dequeueSayisi = 0;
-    
+
     LogKaydi* iter = bas;
     do {
         toplam++;
@@ -231,12 +237,11 @@ void gunlukRaporuOlustur(LogKaydi* bas) {
         }
         iter = iter->next;
     } while (iter != bas);
-    
- 
+
     cout << "\n============== GUNLUK RAPORU ==============" << endl;
     cout << "Toplam Islem Sayisi: " << toplam << endl;
     cout << "---------------------------------------------" << endl;
-    cout << "EKLE:     " << ekleSayisi << " adet (" 
+    cout << "EKLE:     " << ekleSayisi << " adet ("
          << (toplam > 0 ? (ekleSayisi * 100 / toplam) : 0) << "%)" << endl;
     cout << "SIL:      " << silSayisi << " adet ("
          << (toplam > 0 ? (silSayisi * 100 / toplam) : 0) << "%)" << endl;
@@ -244,6 +249,67 @@ void gunlukRaporuOlustur(LogKaydi* bas) {
          << (toplam > 0 ? (guncelleSayisi * 100 / toplam) : 0) << "%)" << endl;
     cout << "DEQUEUE:  " << dequeueSayisi << " adet ("
          << (toplam > 0 ? (dequeueSayisi * 100 / toplam) : 0) << "%)" << endl;
+
+    // 2. Kritik kayıt analizi
+    cout << "\n--- KRITIK KAYIT ANALIZI ---" << endl;
+
+    if (kayitBas == NULL) {
+        cout << "Modul 1 kayit listesi bos, kritik kayit yok." << endl;
+        cout << "=============================================" << endl;
+        return;
+    }
+
+    int kritikSayisi = 0;
+    int kritikUzerindeToplamIslem = 0;
+
+    Kayit* k = kayitBas;
+    while (k != NULL) {
+        if (!k->kritikNot.empty()) kritikSayisi++;
+        k = k->next;
+    }
+
+    cout << "Kritik notu olan kayit sayisi: " << kritikSayisi << endl;
+
+    if (kritikSayisi == 0) {
+        cout << "Kritik kayit bulunmadigi icin detayli analiz yok." << endl;
+        cout << "=============================================" << endl;
+        return;
+    }
+
+    cout << "---------------------------------------------" << endl;
+
+    k = kayitBas;
+    while (k != NULL) {
+        if (!k->kritikNot.empty()) {
+            int kEkle = 0, kSil = 0, kGuncelle = 0, kDequeue = 0;
+            LogKaydi* lit = bas;
+            do {
+                if (lit->kayitID == k->id) {
+                    switch (lit->islemTuru) {
+                        case EKLE:     kEkle++; break;
+                        case SIL:      kSil++; break;
+                        case GUNCELLE: kGuncelle++; break;
+                        case DEQUEUE:  kDequeue++; break;
+                    }
+                }
+                lit = lit->next;
+            } while (lit != bas);
+
+            int kToplam = kEkle + kSil + kGuncelle + kDequeue;
+            kritikUzerindeToplamIslem += kToplam;
+
+            cout << "Kayit ID " << k->id << " (" << k->baslik << "): "
+                 << kToplam << " islem"
+                 << " [E:" << kEkle << " S:" << kSil
+                 << " G:" << kGuncelle << " D:" << kDequeue << "]" << endl;
+        }
+        k = k->next;
+    }
+
+    cout << "---------------------------------------------" << endl;
+    cout << "Kritik kayitlar uzerinde toplam islem: " << kritikUzerindeToplamIslem << endl;
+    cout << "Tum loglara orani: %"
+         << (toplam > 0 ? (kritikUzerindeToplamIslem * 100 / toplam) : 0) << endl;
     cout << "=============================================" << endl;
 }
 

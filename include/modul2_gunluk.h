@@ -17,6 +17,9 @@ using namespace std;
 
 enum IslemTuru { EKLE = 0, SIL = 1, GUNCELLE = 2, DEQUEUE = 3 };
 
+// Kritik kayıt analizi için forward declaration (Modül 1)
+struct Kayit;
+
 
 struct LogKaydi {
     int logID;
@@ -38,7 +41,7 @@ void logYazdir(LogKaydi* log);
 LogKaydi* gunlukKaydiEkle(LogKaydi* bas, IslemTuru tur, int kayitID, string onceki, string yeni);
 void kayitIdIslemleriniListele(LogKaydi* bas, int kayitID);
 void tarihAraligiIslemler(LogKaydi* bas, string baslangic, string bitis);
-void gunlukRaporuOlustur(LogKaydi* bas);
+void gunlukRaporuOlustur(LogKaydi* bas, Kayit* kayitBas);
 void islemTuruneGoreListele(LogKaydi* bas, IslemTuru tur);
 
 // Ekstra

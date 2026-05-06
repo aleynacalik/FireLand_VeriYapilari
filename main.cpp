@@ -2,7 +2,7 @@
  * main.cpp
  * EduFlow - Dijital Eğitim Platformu
  * Kurumsal Operasyon ve Karar Destek Sistemi
- * 
+ *
  * ISE 106 - Veri Yapıları Projesi
  * Modül 1: Ana Kayıt Yönetimi (Tek Yönlü Bağlı Liste)
  * Modül 2: Operasyon Günlüğü (Çift Yönlü Dairesel Bağlı Liste)
@@ -27,38 +27,84 @@
 
 using namespace std;
 
+// Belirli aralikta tamsayi girisi (gecerli olana kadar sorar)
+int intSec(const string& prompt, int minVal, int maxVal) {
+    int x;
+    while (true) {
+        cout << prompt;
+        if (cin >> x && x >= minVal && x <= maxVal) return x;
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "[HATA] Gecersiz giris. " << minVal << "-" << maxVal
+             << " arasinda bir sayi girmelisiniz." << endl;
+    }
+}
+
+// Belirli aralikta ondalikli sayi girisi (gecerli olana kadar sorar)
+float floatSec(const string& prompt, float minVal, float maxVal) {
+    float x;
+    while (true) {
+        cout << prompt;
+        if (cin >> x && x >= minVal && x <= maxVal) return x;
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "[HATA] Gecersiz giris. " << minVal << " - " << maxVal
+             << " arasinda bir sayi girmelisiniz." << endl;
+    }
+}
+
+// Pozitif ID girisi (1 ile 999999 arasi)
+int idSec(const string& prompt) {
+    return intSec(prompt, 1, 999999);
+}
+
+// Puan girişi (0-5 araliginda gecerli sayi olana kadar sorar)
+float puanSec() {
+    float p;
+    while (true) {
+        cout << "Ortalama Puan (0-5): ";
+        if (cin >> p && p >= 0.0 && p <= 5.0) return p;
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "[HATA] Gecersiz giris. 0-5 arasinda bir sayi girmelisiniz." << endl;
+    }
+}
+
+// Kategori için numerik seçim (yanlış girisleri tekrar sorar)
+string kategoriSec() {
+    int secim;
+    while (true) {
+        cout << "Kategori (1=Yazilim, 2=Tasarim, 3=Isletme, 4=Dil, 5=Muzik): ";
+        if (cin >> secim) {
+            switch (secim) {
+                case 1: return "Yazilim";
+                case 2: return "Tasarim";
+                case 3: return "Isletme";
+                case 4: return "Dil";
+                case 5: return "Muzik";
+            }
+        }
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "[HATA] Gecersiz giris. 1-5 arasinda bir sayi girmelisiniz." << endl;
+    }
+}
+
 // Ana menüyü göster
 void anaMenuGoster() {
     cout << "\n===============================================" << endl;
     cout << "        EDUFLOW - DIJITAL EGITIM PLATFORMU" << endl;
     cout << "===============================================" << endl;
-    cout << "1.  Kayit Ekle" << endl;
-    cout << "2.  ID'ye Gore Sil" << endl;
-    cout << "3.  Basliga Gore Guncelle" << endl;
-    cout << "4.  Zaman Damgasi ile Listele" << endl;
-    cout << "5.  ID'ye Gore Ara" << endl;
-    cout << "6.  Toplam Kayit Sayisi" << endl;
-    cout << "7.  Boyuta Gore Sirala" << endl;
-    cout << "8.  En Eski 10 Kayit" << endl;
-    cout << "9.  Kritik Not Ekle" << endl;
-    cout << "10. Kritik Kayitlari Listele" << endl;
-    cout << "-----------------------------------------------" << endl;
-    cout << "11. Kayit ID Islemlerini Listele" << endl;
-    cout << "12. Tarih Araliginda Islemler" << endl;
-    cout << "13. Gunluk Raporu Olustur" << endl;
-    cout << "14. Islem Turune Gore Listele" << endl;
-    cout << "15. Tum Loglari Goster" << endl;
-    cout << "-----------------------------------------------" << endl;
-    cout << "16. Demo Veriler Ekle" << endl;
-    cout << "17. Tum Kayitlari Detayli Goster" << endl;
-    cout << "18. Modul 3 Islevsellikleri" << endl;
-    cout << "19. Modul 4 Islevsellikleri" << endl;
-    cout << "20. Modul 5 Tree Islevsellikleri" << endl;
-    cout << "21. Modul 6 Hash Islevsellikleri" << endl;
-    cout << "22. Modul 7 Veri Sikistirma" << endl;
-    cout << "23. Modul 8 Performans ve Dizi Analizi" << endl;
+    cout << "1. Modul 1 Islevsellikleri (Kayit Yonetimi)" << endl;
+    cout << "2. Modul 2 Islevsellikleri (Operasyon Gunlugu)" << endl;
+    cout << "3. Modul 3 Islevsellikleri (Stack)" << endl;
+    cout << "4. Modul 4 Islevsellikleri (Queue)" << endl;
+    cout << "5. Modul 5 Tree Islevsellikleri" << endl;
+    cout << "6. Modul 6 Hash Islevsellikleri" << endl;
+    cout << "7. Modul 7 Veri Sikistirma" << endl;
+    cout << "8. Modul 8 Performans ve Dizi Analizi" << endl;
     cout << "===============================================" << endl;
-    cout << "0.  Cikis" << endl;
+    cout << "0. Cikis" << endl;
     cout << "===============================================" << endl;
     cout << "Seciminiz: ";
 }
@@ -70,16 +116,16 @@ int main() {
     StackIslem* stackUst = NULL;
     Talep* talepBas = NULL;
     int sonIslenenLogID = 0;
-    
+
     // Ağaç yapıları
     AgacDugumu* tarihAgaci = NULL;
     AgacDugumu* oncelikAgaci = NULL;
-    
+
     // Hash Tablosu
     HashTablosu* hashTablosu = NULL;
     PerformansDurumu performansDurumu;
     performansDurumuBaslat(&performansDurumu);
-    
+
     // Değişkenler
     int secim;
     string baslik, kategori, eskiBaslik, yeniBaslik, yeniKategori, not_, tarih1, tarih2;
@@ -89,7 +135,7 @@ int main() {
     string hamVeri;
     SikistirmaSonucu huffmanSonuc, lzwSonuc, sfSonuc;
     Oncelik oncelik;
-    
+
     // Hoşgeldin mesajı
     cout << "================================================" << endl;
     cout << "   EDUFLOW - Dijital Egitim Platformu" << endl;
@@ -97,136 +143,202 @@ int main() {
     cout << "   Modul 1: Ana Kayit Yonetimi" << endl;
     cout << "   Modul 2: Operasyon Gunlugu" << endl;
     cout << "================================================" << endl;
-    
+
     do {
         anaMenuGoster();
-        cin >> secim;
+        secim = intSec("", 0, 8);
         cin.ignore();
-        
+
         switch(secim) {
-            // ========== MODÜL 1 İŞLEMLERİ ==========
-            
-            case 1: // Kayıt Ekle
-            {
-                clock_t t0 = clock();
-                cout << "\n--- KAYIT EKLE ---" << endl;
-                cout << "Baslik: "; getline(cin, baslik);
-                cout << "Kategori (Yazilim/Tasarim/Isletme/Dil/Muzik): "; getline(cin, kategori);
-                cout << "Boyut (KB): "; cin >> boyut;
-                cout << "Oncelik (0=Dusuk, 1=Orta, 2=Yuksek): "; cin >> oncelikInt;
-                cout << "Ortalama Puan (0-5): "; cin >> puan;
-                oncelik = (Oncelik)oncelikInt;
-                kayitBas = kayitEkle(kayitBas, &logBas, baslik, kategori, boyut, oncelik, puan);
-                clock_t t1 = clock();
-                olcumEkle(&performansDurumu, "Modul1-KayitEkle", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
-                break;
-            }
-                
-            case 2: // ID'ye Göre Sil
-            {
-                clock_t t0 = clock();
-                cout << "\n--- KAYIT SIL ---" << endl;
-                cout << "Silinecek ID: "; cin >> id;
-                kayitBas = kayitSil(kayitBas, &logBas, id);
-                clock_t t1 = clock();
-                olcumEkle(&performansDurumu, "Modul1-KayitSil", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
-                break;
-            }
-                
-            case 3: // Başlığa Göre Güncelle
-            {
-                clock_t t0 = clock();
-                cout << "\n--- KAYIT GUNCELLE ---" << endl;
-                cout << "Eski Baslik: "; getline(cin, eskiBaslik);
-                cout << "Yeni Baslik: "; getline(cin, yeniBaslik);
-                cout << "Yeni Kategori: "; getline(cin, yeniKategori);
-                cout << "Yeni Boyut (KB): "; cin >> yeniBoyut;
-                kayitBas = kayitGuncelle(kayitBas, &logBas, eskiBaslik, yeniBaslik, yeniKategori, yeniBoyut);
-                clock_t t1 = clock();
-                olcumEkle(&performansDurumu, "Modul1-KayitGuncelle", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
-                break;
-            }
-                
-            case 4: // Zamanlı Listele
-                zamanliListele(kayitBas);
-                break;
-                
-            case 5: // ID'ye Göre Ara
-            {
-                clock_t t0 = clock();
-                cout << "\n--- KAYIT ARA ---" << endl;
-                cout << "Aranacak ID: "; cin >> id;
-                kayitYazdir(kayitAra(kayitBas, id));
-                erisimKaydet(&performansDurumu, id);
-                clock_t t1 = clock();
-                olcumEkle(&performansDurumu, "Modul1-KayitAra", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
-                break;
-            }
-                
-            case 6: // Toplam Kayıt Sayısı
-                cout << "\nToplam Kayit Sayisi: " << toplamKayitSayisi(kayitBas) << endl;
-                break;
-                
-            case 7: // Boyuta Göre Sırala
-                boyutaSirala(kayitBas);
-                break;
-                
-            case 8: // En Eski 10 Kayıt
-                enEski10Kayit(kayitBas);
-                break;
-                
-            case 9: // Kritik Not Ekle
-                cout << "\n--- KRITIK NOT EKLE ---" << endl;
-                cout << "Kayit ID: "; cin >> id;
-                cin.ignore();
-                cout << "Kritik Not: "; getline(cin, not_);
-                kayitBas = kritikNotEkle(kayitBas, &logBas, id, not_);
-                break;
-                
-            case 10: // Kritik Kayıtları Listele
-                kritikKayitlariListele(kayitBas);
-                break;
-                
-            // ========== MODÜL 2 İŞLEMLERİ ==========
-            
-            case 11: // Kayıt ID İşlemlerini Listele
-                cout << "\n--- KAYIT ISLEMLERI ---" << endl;
-                cout << "Kayit ID: "; cin >> id;
-                kayitIdIslemleriniListele(logBas, id);
-                break;
-                
-            case 12: // Tarih Aralığında İşlemler
-                cout << "\n--- TARIH ARALIGINDA ISLEMLER ---" << endl;
-                cout << "Baslangic Tarihi (GG/AA/YYYY): "; getline(cin, tarih1);
-                cout << "Bitis Tarihi (GG/AA/YYYY): "; getline(cin, tarih2);
-                tarihAraligiIslemler(logBas, tarih1, tarih2);
-                break;
-                
-            case 13: // Günlük Raporu
-                gunlukRaporuOlustur(logBas);
-                break;
-                
-            case 14: // İşlem Türüne Göre Listele
-                cout << "\n--- ISLEM TURUNE GORE LISTELE ---" << endl;
-                cout << "Islem Turu (0=EKLE, 1=SIL, 2=GUNCELLE, 3=DEQUEUE): "; cin >> islemInt;
-                islemTuruneGoreListele(logBas, (IslemTuru)islemInt);
-                break;
-                
-            case 15: // Tüm Logları Göster
-                tumLoglariListele(logBas);
-                break;
-                
-            // ========== EKSTRA ==========
-            
-            case 16: // Demo Veriler
-                kayitBas = demoVerilerEkle(kayitBas, &logBas);
-                break;
-                
-            case 17: // Tüm Kayıtları Detaylı Göster
-                tumKayitlariListele(kayitBas);
+            // ========== MODUL 1: KAYIT YONETIMI ==========
+            case 1:
+                do {
+                    cout << "\n===== MODUL 1 ISLEVSELLIKLERI (KAYIT YONETIMI) =====" << endl;
+                    cout << "1.  Kayit Ekle" << endl;
+                    cout << "2.  ID'ye Gore Sil" << endl;
+                    cout << "3.  Basliga Gore Guncelle" << endl;
+                    cout << "4.  Zaman Damgasi ile Listele" << endl;
+                    cout << "5.  ID'ye Gore Ara" << endl;
+                    cout << "6.  Toplam Kayit Sayisi" << endl;
+                    cout << "7.  Boyuta Gore Sirala" << endl;
+                    cout << "8.  En Eski 10 Kayit" << endl;
+                    cout << "9.  Kritik Not Ekle" << endl;
+                    cout << "10. Kritik Kayitlari Listele" << endl;
+                    cout << "11. Demo Veriler Ekle" << endl;
+                    cout << "12. Tum Kayitlari Detayli Goster" << endl;
+                    cout << "13. Kaydi Arsivle" << endl;
+                    cout << "14. Arsivden Cikar" << endl;
+                    cout << "15. Arsivdeki Kayitlari Listele" << endl;
+                    cout << "16. Kaydi Revize Asamasina Al" << endl;
+                    cout << "17. Revizeyi Tamamla" << endl;
+                    cout << "0.  Ana menuye don" << endl;
+                    altSecim = intSec("Seciminiz: ", 0, 17);
+                    cin.ignore();
+
+                    switch (altSecim) {
+                        case 1: // Kayıt Ekle
+                        {
+                            clock_t t0 = clock();
+                            cout << "\n--- KAYIT EKLE ---" << endl;
+                            cout << "Baslik: "; getline(cin, baslik);
+                            kategori = kategoriSec();
+                            boyut = floatSec("Boyut (KB): ", 0.0, 1e9);
+                            oncelikInt = intSec("Oncelik (0=Dusuk, 1=Orta, 2=Yuksek): ", 0, 2);
+                            puan = puanSec();
+                            int durumSecim = intSec("Durum (1=Aktif olarak kaydet, 2=Revize asamasinda baslat): ", 1, 2);
+                            oncelik = (Oncelik)oncelikInt;
+                            kayitBas = kayitEkle(kayitBas, &logBas, baslik, kategori, boyut, oncelik, puan);
+                            if (durumSecim == 2) {
+                                Kayit* sonKayit = kayitBas;
+                                while (sonKayit != NULL && sonKayit->next != NULL) sonKayit = sonKayit->next;
+                                if (sonKayit != NULL) {
+                                    kayitBas = kaydiIslemeAl(kayitBas, &logBas, sonKayit->id);
+                                }
+                            }
+                            clock_t t1 = clock();
+                            olcumEkle(&performansDurumu, "Modul1-KayitEkle", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
+                            break;
+                        }
+                        case 2: // ID'ye Göre Sil
+                        {
+                            clock_t t0 = clock();
+                            cout << "\n--- KAYIT SIL ---" << endl;
+                            id = idSec("Silinecek ID: ");
+                            kayitBas = kayitSil(kayitBas, &logBas, id);
+                            clock_t t1 = clock();
+                            olcumEkle(&performansDurumu, "Modul1-KayitSil", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
+                            break;
+                        }
+                        case 3: // Başlığa Göre Güncelle
+                        {
+                            clock_t t0 = clock();
+                            cout << "\n--- KAYIT GUNCELLE ---" << endl;
+                            cout << "Eski Baslik: "; getline(cin, eskiBaslik);
+                            cout << "Yeni Baslik: "; getline(cin, yeniBaslik);
+                            cout << "Yeni "; yeniKategori = kategoriSec();
+                            yeniBoyut = floatSec("Yeni Boyut (KB): ", 0.0, 1e9);
+                            kayitBas = kayitGuncelle(kayitBas, &logBas, eskiBaslik, yeniBaslik, yeniKategori, yeniBoyut);
+                            clock_t t1 = clock();
+                            olcumEkle(&performansDurumu, "Modul1-KayitGuncelle", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
+                            break;
+                        }
+                        case 4: // Zamanlı Listele
+                            zamanliListele(kayitBas);
+                            break;
+                        case 5: // ID'ye Göre Ara
+                        {
+                            clock_t t0 = clock();
+                            cout << "\n--- KAYIT ARA ---" << endl;
+                            id = idSec("Aranacak ID: ");
+                            kayitYazdir(kayitAra(kayitBas, id));
+                            erisimKaydet(&performansDurumu, id);
+                            clock_t t1 = clock();
+                            olcumEkle(&performansDurumu, "Modul1-KayitAra", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
+                            break;
+                        }
+                        case 6: // Toplam Kayıt Sayısı
+                            cout << "\nToplam Kayit Sayisi: " << toplamKayitSayisi(kayitBas) << endl;
+                            break;
+                        case 7: // Boyuta Göre Sırala
+                            boyutaSirala(kayitBas);
+                            break;
+                        case 8: // En Eski 10 Kayıt
+                            enEski10Kayit(kayitBas);
+                            break;
+                        case 9: // Kritik Not Ekle
+                            cout << "\n--- KRITIK NOT EKLE ---" << endl;
+                            id = idSec("Kayit ID: ");
+                            cin.ignore();
+                            cout << "Kritik Not: "; getline(cin, not_);
+                            kayitBas = kritikNotEkle(kayitBas, &logBas, id, not_);
+                            break;
+                        case 10: // Kritik Kayıtları Listele
+                            kritikKayitlariListele(kayitBas);
+                            break;
+                        case 11: // Demo Veriler
+                            kayitBas = demoVerilerEkle(kayitBas, &logBas);
+                            break;
+                        case 12: // Tüm Kayıtları Detaylı Göster
+                            tumKayitlariListele(kayitBas);
+                            break;
+                        case 13: // Kaydı Arşivle
+                            cout << "\n--- KAYIT ARSIVLE ---" << endl;
+                            id = idSec("Arsivlenecek ID: ");
+                            cin.ignore();
+                            kayitBas = kayitArsivle(kayitBas, &logBas, id);
+                            break;
+                        case 14: // Arşivden Çıkar
+                            cout << "\n--- ARSIVDEN CIKAR ---" << endl;
+                            id = idSec("Cikarilacak ID: ");
+                            cin.ignore();
+                            kayitBas = arsivdenCikar(kayitBas, &logBas, id);
+                            break;
+                        case 15: // Arşivdeki Kayıtları Listele
+                            arsivdekiKayitlariListele(kayitBas);
+                            break;
+                        case 16: // Revize Asamasina Al
+                            cout << "\n--- REVIZE ASAMASINA AL ---" << endl;
+                            id = idSec("Kayit ID: ");
+                            cin.ignore();
+                            kayitBas = kaydiIslemeAl(kayitBas, &logBas, id);
+                            break;
+                        case 17: // Revizeyi Tamamla
+                            cout << "\n--- REVIZEYI TAMAMLA ---" << endl;
+                            id = idSec("Kayit ID: ");
+                            cin.ignore();
+                            kayitBas = islemiTamamla(kayitBas, &logBas, id);
+                            break;
+                        case 0: break;
+                        default: cout << "[HATA] Gecersiz secim!" << endl;
+                    }
+                } while (altSecim != 0);
                 break;
 
-            case 18: // Modul 3 Islevsellikleri
+            // ========== MODUL 2: OPERASYON GUNLUGU ==========
+            case 2:
+                do {
+                    cout << "\n===== MODUL 2 ISLEVSELLIKLERI (OPERASYON GUNLUGU) =====" << endl;
+                    cout << "1. Kayit ID Islemlerini Listele" << endl;
+                    cout << "2. Tarih Araliginda Islemler" << endl;
+                    cout << "3. Gunluk Raporu Olustur" << endl;
+                    cout << "4. Islem Turune Gore Listele" << endl;
+                    cout << "5. Tum Loglari Goster" << endl;
+                    cout << "0. Ana menuye don" << endl;
+                    altSecim = intSec("Seciminiz: ", 0, 5);
+                    cin.ignore();
+
+                    switch (altSecim) {
+                        case 1: // Kayıt ID İşlemlerini Listele
+                            cout << "\n--- KAYIT ISLEMLERI ---" << endl;
+                            id = idSec("Kayit ID: ");
+                            cin.ignore();
+                            kayitIdIslemleriniListele(logBas, id);
+                            break;
+                        case 2: // Tarih Aralığında İşlemler
+                            cout << "\n--- TARIH ARALIGINDA ISLEMLER ---" << endl;
+                            cout << "Baslangic Tarihi (GG/AA/YYYY): "; getline(cin, tarih1);
+                            cout << "Bitis Tarihi (GG/AA/YYYY): "; getline(cin, tarih2);
+                            tarihAraligiIslemler(logBas, tarih1, tarih2);
+                            break;
+                        case 3: // Günlük Raporu
+                            gunlukRaporuOlustur(logBas, kayitBas);
+                            break;
+                        case 4: // İşlem Türüne Göre Listele
+                            cout << "\n--- ISLEM TURUNE GORE LISTELE ---" << endl;
+                            islemInt = intSec("Islem Turu (0=EKLE, 1=SIL, 2=GUNCELLE, 3=DEQUEUE): ", 0, 3);
+                            islemTuruneGoreListele(logBas, (IslemTuru)islemInt);
+                            break;
+                        case 5: // Tüm Logları Göster
+                            tumLoglariListele(logBas);
+                            break;
+                        case 0: break;
+                        default: cout << "[HATA] Gecersiz secim!" << endl;
+                    }
+                } while (altSecim != 0);
+                break;
+
+            // ========== MODUL 3: STACK ==========
+            case 3:
                 do {
                     cout << "\n===== MODUL 3 ISLEVSELLIKLERI (STACK) =====" << endl;
                     cout << "1. Islem push (loglardan stack guncelle)" << endl;
@@ -263,7 +375,8 @@ int main() {
                 } while (altSecim != 0);
                 break;
 
-            case 19: // Modul 4 Islevsellikleri
+            // ========== MODUL 4: QUEUE ==========
+            case 4:
                 do {
                     cout << "\n===== MODUL 4 ISLEVSELLIKLERI (QUEUE) =====" << endl;
                     cout << "1. Yeni talep ekle" << endl;
@@ -312,7 +425,7 @@ int main() {
                 break;
 
             // ========== MODUL 5: TREE ==========
-            case 20:
+            case 5:
                 do {
                     cout << "\n===== MODUL 5 TREE Islevsellikleri =====" << endl;
                     cout << "1. Tarihe gore agac olustur ve listele" << endl;
@@ -323,7 +436,7 @@ int main() {
                     cout << "0. Ana menuye don" << endl;
                     cout << "Seciminiz: ";
                     cin >> altSecim; cin.ignore();
- 
+
                     switch (altSecim) {
                         case 1:
                             if (kayitBas == NULL) {
@@ -350,7 +463,7 @@ int main() {
                                 }
                             }
                             break;
- 
+
                         case 2:
                             if (kayitBas == NULL) {
                                 cout << "[BILGI] Kayit listesi bos. Once kayit ekleyin." << endl;
@@ -360,7 +473,7 @@ int main() {
                             oncelikAgaci = onceligeGoreAgacOlustur(kayitBas);
                             onceligeGoreAgacYazdir(oncelikAgaci);
                             break;
- 
+
                         case 3:
                             if (kayitBas == NULL) {
                                 cout << "[BILGI] Kayit listesi bos. Once kayit ekleyin." << endl;
@@ -372,7 +485,7 @@ int main() {
                             cin.ignore();
                             puanAraligiFiltrele(kayitBas, minPuan, maxPuan);
                             break;
- 
+
                         case 4:
                             if (tarihAgaci == NULL && kayitBas != NULL) {
                                 tarihAgaci = tariheGoreAgacOlustur(kayitBas);
@@ -380,22 +493,22 @@ int main() {
                             }
                             agacPerformansBilgisi(tarihAgaci);
                             break;
- 
+
                         case 5:
                             cout << "\n--- TARIH BAZLI TREND ANALIZI ---" << endl;
                             cout << "Esik Yil (ornek: 2020, 2023): "; cin >> yil;
                             cin.ignore();
                             tarihBazliTrendAnalizi(kayitBas, yil);
                             break;
- 
+
                         case 0: break;
                         default: cout << "[HATA] Gecersiz secim!" << endl;
                     }
                 } while (altSecim != 0);
                 break;
-            
+
             // ========== MODUL 6: HASH ANALIZ MOTORU ==========
-            case 21:
+            case 6:
                 do {
                     cout << "\n===== MODUL 6 HASH ANALIZ MOTORU =====" << endl;
                     cout << "1. Hash tablosu olustur" << endl;
@@ -407,7 +520,7 @@ int main() {
                     cout << "0. Ana menuye don" << endl;
                     cout << "Seciminiz: ";
                     cin >> altSecim; cin.ignore();
-                    
+
                     switch (altSecim) {
                         case 1:
                             if (kayitBas == NULL) {
@@ -418,7 +531,7 @@ int main() {
                             hashTablosu = hashTablosuOlustur(kayitBas);
                             cout << "[BILGI] Hash tablosu olusturuldu (boyut: " << HASH_BOYUTU << ")" << endl;
                             break;
-                        
+
                         case 2:
                             if (hashTablosu == NULL) {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
@@ -428,7 +541,7 @@ int main() {
                             cin.ignore();
                             idyeGoreOrtalamaPuanBul(hashTablosu, id);
                             break;
-                        
+
                         case 3:
                             if (hashTablosu == NULL) {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
@@ -439,7 +552,7 @@ int main() {
                             sayac = kategoriyeSayiBul(hashTablosu, kategori);
                             cout << "[BILGI] '" << kategori << "' kategorisinde " << sayac << " kayit var." << endl;
                             break;
-                        
+
                         case 4:
                             if (hashTablosu == NULL) {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
@@ -447,7 +560,7 @@ int main() {
                             }
                             tumKategorileriAnaliz(hashTablosu);
                             break;
-                        
+
                         case 5:
                             if (hashTablosu == NULL) {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
@@ -455,7 +568,7 @@ int main() {
                             }
                             onceligeGoreYogunlukAnalizi(hashTablosu);
                             break;
-                        
+
                         case 6:
                             if (hashTablosu == NULL) {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
@@ -463,7 +576,7 @@ int main() {
                             }
                             hashPerformansBilgisi(hashTablosu);
                             break;
-                        
+
                         case 0: break;
                         default: cout << "[HATA] Gecersiz secim!" << endl;
                     }
@@ -471,7 +584,7 @@ int main() {
                 break;
 
             // ========== MODUL 7: VERI SIKISTIRMA ==========
-            case 22:
+            case 7:
                 do {
                     cout << "\n===== MODUL 7 VERI SIKISTIRMA =====" << endl;
                     cout << "1. Frekans analizi (Modul 1 verisi)" << endl;
@@ -527,7 +640,7 @@ int main() {
                 break;
 
             // ========== MODUL 8: PERFORMANS ==========
-            case 23:
+            case 8:
                 do {
                     cout << "\n===== MODUL 8 PERFORMANS & DIZI ANALIZI =====" << endl;
                     cout << "1. Son 10 erisilen kaydi goster" << endl;
@@ -571,13 +684,13 @@ int main() {
             case 0: // Çıkış
                 cout << "\nProgram sonlandiriliyor..." << endl;
                 break;
-                
+
             default:
                 cout << "\n[HATA] Gecersiz secim!" << endl;
         }
-        
+
     } while(secim != 0);
-    
+
     // Bellek temizliği
     listeTemizle(kayitBas);
     listeTemizleLog(logBas);
@@ -587,7 +700,7 @@ int main() {
     if (oncelikAgaci != NULL) agacTemizle(oncelikAgaci);
     if (hashTablosu  != NULL) hashTablosuTemizle(hashTablosu);
     performansDurumuTemizle(&performansDurumu);
-    
+
     cout << "Bay bay!" << endl;
     return 0;
 }
