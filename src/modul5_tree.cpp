@@ -3,6 +3,7 @@
 #include <string>
 
 using namespace std;
+
 // ==================== YARDIMCI FONKSIYONLAR ====================
  
 AgacDugumu* yeniDugumOlustur(Kayit* k) {
@@ -13,7 +14,7 @@ AgacDugumu* yeniDugumOlustur(Kayit* k) {
     return yeni;
 }
  
-// Agaci bellek temizleme kayitlari silmez, sadece agac dugumlerini)
+// Agaci bellek temizleme kayitlari silmez, sadece agac dugumlerini
 void agacTemizle(AgacDugumu* kok) {
     if (kok == NULL) return;
     agacTemizle(kok->sol);
@@ -21,13 +22,12 @@ void agacTemizle(AgacDugumu* kok) {
     delete kok;
 }
  
-// Agac gorsellestirmesi icin girinti
+// Agac gorsellestirmesi
 void girisBoslukluYazdir(int seviye) {
     for (int i = 0; i < seviye; i++) cout << "    ";
 }
  
-// Tarih stringinden YYYYMMDDHHMMSS formatinda karsilastirma anahtari uret
-// Ornek: "27/04/2026 14:30:45" -> "20260427143045"
+//"27/04/2026 14:30:45" -> "20260427143045" olarak algılanır
 string tarihAnahtarUret(const string& tarih) {
     // Tarih formati: "DD/MM/YYYY HH:MM:SS"
     if (tarih.length() < 19) return "00000000000000";
@@ -42,36 +42,29 @@ string tarihAnahtarUret(const string& tarih) {
  
 // ==================== 1. ISLEVSELLIK ====================
 // Tarihe gore BST olustur ve yil/ay bazli filtrele
-//
-// BST kurma kurali (hoca slaytindan):
-//   - Eklenecek dugumun anahtari kokten KUCUKSE  -> SOL alt agaca dal
+// BST kurma kurali
+//   - Eklenecek düğümün anahtari kokten KUCUKSE  -> SOL alt agaca dal
 //   - Eklenecek dugumun anahtari kokten BUYUKSE  -> SAG alt agaca dal
 //   - Boş bir yere gelindiğinde yeni dugumu oraya bagla
-//
-// Tarih anahtari: "DD/MM/YYYY HH:MM:SS" -> "YYYYMMDDHHMMSS" stringine donusturulur
-// Boylece string karsilastirmasi kronolojik siraya esit olur.
-// Ornek: "26/04/2026 14:30:45" -> "20260426143045"
-//        "01/01/2024 10:15:30" -> "20240101101530"  <- daha kucuk -> SOLA gider (daha eski)
  
 AgacDugumu* tariheGoreEkle(AgacDugumu* kok, Kayit* k) {
-    // Temel durum: bos dugume ulastik, yeni dugumu buraya bagla
+    //bos dugume ulastik, yeni dugumu buraya bagla
     if (kok == NULL) return yeniDugumOlustur(k);
  
-    // Karsilastirilacak tarih anahtarlarini uret (YYYYMMDDHHMMSS formati)
+    //(YYYYMMDDHHMMSS formati)
     string yeniAnahtar = tarihAnahtarUret(k->tarih);
     string kokAnahtar  = tarihAnahtarUret(kok->kayit->tarih);
  
-    // Hoca slaytindaki dugum ekleme algoritmasi:
-    // "kucuk olan deger sola, buyuk olan deger saga eklenir"
+    // küçük olan değer sola, buyuk olan değer sağa eklenir
     if (yeniAnahtar <= kokAnahtar)
         kok->sol = tariheGoreEkle(kok->sol, k);  // Daha eski -> sol alt agaca
     else
         kok->sag = tariheGoreEkle(kok->sag, k);  // Daha yeni -> sag alt agaca
  
-    return kok; // Guncellenmis kok adresini geri dondur (rekürsif yapi)
+    return kok;
 }
  
-// Modul 1'deki tum kayitlari BST'ye ekleyerek tarih agacini olusturur
+//tarih agacini olusturur
 AgacDugumu* tariheGoreAgacOlustur(Kayit* bas) {
     AgacDugumu* kok = NULL; // Bos agac ile basla
     Kayit* iter = bas;
@@ -83,28 +76,26 @@ AgacDugumu* tariheGoreAgacOlustur(Kayit* bas) {
     return kok;
 }
  
-// INORDER (Ortada-kok) gezinti: Sol -> Kok -> Sag
-// Hoca slaytina gore InOrder gezinti siralanmis listeyi verir.
-// Bu agacta InOrder = eskiden yeniye kronolojik sira demektir.
+// INORDER gezinti: Sol -> Kok -> Sag
+// eskiden yeniye kronolojik sıra
 void tariheGoreAgacListele(AgacDugumu* kok) {
-    if (kok == NULL) return;                      // Bos dugum: geri don
-    tariheGoreAgacListele(kok->sol);              // Once sol alt agaci gez (daha eski)
+    if (kok == NULL) return;
+    tariheGoreAgacListele(kok->sol);              // Once sol alt agaci gez (eskiler burda)
     // Kok dugumundeki bilgiyi yazdir
     cout << "  [" << kok->kayit->tarih.substr(0,10) << "]"
          << "  ID:" << kok->kayit->id
          << "  " << kok->kayit->baslik
          << "  (" << kok->kayit->kategori << ")"
          << "  [" << oncelikToString(kok->kayit->oncelik) << "]" << endl;
-    tariheGoreAgacListele(kok->sag);              // Sonra sag alt agaci gez (daha yeni)
+    tariheGoreAgacListele(kok->sag);              // Sonra sag alt agaci gez (eskiden yeniye doğru)
 }
  
 // YIL BAZLI FILTRELEME:
 // Inorder gezinti yaparak sadece istenen yila ait kayitlari ekrana yazar.
-// Tum dugumler ziyaret edilir (O(N) karmasiklik - hoca slaytindaki dolas ma alg.)
+// Tüm düğümleri gezer,O(N) karmasiklik
 void yilaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil) {
     if (kok == NULL) return;
     yilaGoreFiltreleYazdir(kok->sol, yil);        // Sol alt agaci gez
-    // Tarih formati: "GG/AA/YYYY SS:DD:SS" -> yil kismi index 6, uzunluk 4
     string kayitYili = kok->kayit->tarih.substr(6, 4);
     if (kayitYili == yil) {                        // Yil eslesmesi varsa yazdir
         cout << "  [" << kok->kayit->tarih.substr(0,10) << "]"
@@ -118,7 +109,6 @@ void yilaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil) {
  
 // AY BAZLI FILTRELEME:
 // Inorder gezinti ile hem yil hem ay eslesmesi aranan kayitlari yazdirir.
-// Tarih formati: "GG/AA/YYYY" -> ay index 3, yil index 6
 void ayaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, const string& ay) {
     if (kok == NULL) return;
     ayaGoreFiltreleYazdir(kok->sol, yil, ay);
@@ -134,7 +124,7 @@ void ayaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, const string& ay)
     ayaGoreFiltreleYazdir(kok->sag, yil, ay);
 }
  
-// Kullaniciya secim sunarak yil veya ay bazli filtreleme menusunu calistir
+// Kullaniciya secim sunarak yil veya ay bazli filtreleme saglar
 void tariheGoreFiltrele(AgacDugumu* kok) {
     if (kok == NULL) {
         cout << "[BILGI] Agac bos. Once 'Tarihe gore agac olustur' secenegini calistirin." << endl;
@@ -164,7 +154,6 @@ void tariheGoreFiltrele(AgacDugumu* kok) {
         yilaGoreFiltreleYazdir(kok, yil);
  
         // Toplam sayısı için tekrar gez
-        // (basit bir yardimci fonksiyon daha temiz olur)
         cout << "=================================================" << endl;
  
     } else if (secim == 2) {
@@ -176,7 +165,7 @@ void tariheGoreFiltrele(AgacDugumu* kok) {
         // Tek haneli ay girilirse basa 0 ekle
         if (ay.length() == 1) ay = "0" + ay;
  
-        // Ay adini bul
+        // Ay isimleribi bul
         string ayAdi[] = {"", "Ocak","Subat","Mart","Nisan","Mayis","Haziran",
                            "Temmuz","Agustos","Eylul","Ekim","Kasim","Aralik"};
         int ayInt = 0;
@@ -247,15 +236,10 @@ void onceligeGoreAgacYazdir(AgacDugumu* kok) {
 }
  
 // ==================== 3. ISLEVSELLIK ====================
-// Puan araligi filtreleme - Puan BST'si kurarak filtreleme
-//
+// Puan araligi filtreleme 
 // BST kurma kurali:
 //   Dusuk puan -> sola,  Yuksek puan -> saga
 // Boylece InOrder gezinti puanlari kucukten buyuge verir.
-//
-// Filtreleme avantaji:
-//   minPuan'dan kucuk olan tum sol alt agaci atlayabiliriz.
-//   Bu sayede her kaydi kontrol etmek zorunda kalmayiz.
  
 // Puan BST'sine dugum ekle (kucuk sola, buyuk saga)
 AgacDugumu* puanaGoreEkle(AgacDugumu* kok, Kayit* k) {
@@ -281,13 +265,12 @@ AgacDugumu* puanAgaciOlustur(Kayit* bas) {
 }
  
 // InOrder gezinti ile puan araligindaki kayitlari yazdir
-// BST avantaji: minPuan'dan kucuk sol alt agaci atliyoruz
 void puanAraligiGezinti(AgacDugumu* kok, float minPuan, float maxPuan, int& bulunan) {
     if (kok == NULL) return;
  
     // Sol alt agaci yalnizca minPuan ihtimali varsa gez
     // (BST'de sol taraf her zaman daha kucuk puana sahip)
-    if (kok->kayit->ortalamaPuan > minPuan)
+    if (kok->kayit->ortalamaPuan >= minPuan)
         puanAraligiGezinti(kok->sol, minPuan, maxPuan, bulunan);
  
     // Kok dugumu aralikta mi kontrol et
@@ -319,7 +302,7 @@ void puanAraligiFiltrele(Kayit* bas, float minPuan, float maxPuan) {
         return;
     }
  
-    // Once puan BST'sini olustur
+    // Önce puan BST'sini olustur
     AgacDugumu* puanKok = puanAgaciOlustur(bas);
  
     cout << "\n========== PUAN BST - ARALIK FILTRELEME ==========" << endl;
@@ -337,7 +320,7 @@ void puanAraligiFiltrele(Kayit* bas, float minPuan, float maxPuan) {
  
     cout << "===================================================" << endl;
  
-    // Gecici agaci temizle (Modul 1 kayitlarini silmez, sadece agac dugumlerini)
+// Modul 1 kayitlarini silmez, sadece agac dugumlerini siler
     agacTemizle(puanKok);
 }
  
@@ -374,7 +357,7 @@ void agacPerformansBilgisi(AgacDugumu* kok) {
     int dahili    = toplam - yaprak;
  
     // Ideal BST yuksekligi: log2(n) + 1
-    // log2 hesabi donguylle
+
     int idealYukseklik = 1;
     int temp = toplam;
     while (temp > 1) { temp /= 2; idealYukseklik++; }
@@ -400,7 +383,6 @@ void agacPerformansBilgisi(AgacDugumu* kok) {
  
 // ==================== 5. ISLEVSELLIK ====================
 // Belirlenen yil oncesi / sonrasi trend analizi
-// EduFlow icin varsayilan yil: 2020 (COVID donemini baz alir)
  
 void tarihBazliTrendAnalizi(Kayit* bas, int yil) {
     if (bas == NULL) {
@@ -414,7 +396,6 @@ void tarihBazliTrendAnalizi(Kayit* bas, int yil) {
  
     Kayit* iter = bas;
     while (iter != NULL) {
-        // Tarihin yilini cikart: "GG/AA/YYYY ..." formatindan
         int kayitYili = 0;
         if (iter->tarih.length() >= 10) {
             kayitYili = (iter->tarih[6]  - '0') * 1000 +

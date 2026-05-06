@@ -122,7 +122,12 @@ Kayit* kayitSil(Kayit* bas, LogKaydi** logBas, int id) {
         Kayit* temp = bas->next;
         
         
-        *logBas = gunlukKaydiEkle(*logBas, SIL, id, bas->baslik, "");
+        string srl = to_string(bas->id) + "|" + bas->baslik + "|" + bas->kategori + "|"
+           + to_string(bas->boyut) + "|" + bas->tarih + "|"
+           + to_string((int)bas->oncelik) + "|" + to_string((int)bas->durum) + "|"
+           + to_string(bas->ortalamaPuan) + "|" + bas->kritikNot;
+        
+           *logBas = gunlukKaydiEkle(*logBas, SIL, id, srl, "");
         
         cout << "[BASARILI] Silindi: " << bas->baslik << endl;
         delete bas;
@@ -136,8 +141,12 @@ Kayit* kayitSil(Kayit* bas, LogKaydi** logBas, int id) {
             Kayit* silinecek = iter->next;
             iter->next = silinecek->next;
             
-
-            *logBas = gunlukKaydiEkle(*logBas, SIL, id, silinecek->baslik, "");
+            string srl = to_string(silinecek->id) + "|" + silinecek->baslik + "|" + silinecek->kategori + "|"
+           + to_string(silinecek->boyut) + "|" + silinecek->tarih + "|"
+           + to_string((int)silinecek->oncelik) + "|" + to_string((int)silinecek->durum) + "|"
+           + to_string(silinecek->ortalamaPuan) + "|" + silinecek->kritikNot;
+        
+           *logBas = gunlukKaydiEkle(*logBas, SIL, id, srl, "");
             
             cout << "[BASARILI] Silindi: " << silinecek->baslik << endl;
             delete silinecek;
