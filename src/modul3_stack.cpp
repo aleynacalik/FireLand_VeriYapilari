@@ -159,17 +159,31 @@ void enSikIslemTuruAnalizi(StackIslem* ust) {
     }
 
     int enYuksek = ekle;
-    string enSik = "EKLE";
-    if (sil > enYuksek) { enYuksek = sil; enSik = "SIL"; }
-    if (guncelle > enYuksek) { enYuksek = guncelle; enSik = "GUNCELLE"; }
-    if (dequeue > enYuksek) { enYuksek = dequeue; enSik = "DEQUEUE"; }
+    if (sil > enYuksek) enYuksek = sil;
+    if (guncelle > enYuksek) enYuksek = guncelle;
+    if (dequeue > enYuksek) enYuksek = dequeue;
+
+    string enSikListe = "";
+    if (ekle == enYuksek) enSikListe += "EKLE";
+    if (sil == enYuksek) {
+        if (!enSikListe.empty()) enSikListe += ", ";
+        enSikListe += "SIL";
+    }
+    if (guncelle == enYuksek) {
+        if (!enSikListe.empty()) enSikListe += ", ";
+        enSikListe += "GUNCELLE";
+    }
+    if (dequeue == enYuksek) {
+        if (!enSikListe.empty()) enSikListe += ", ";
+        enSikListe += "DEQUEUE";
+    }
 
     cout << "\n========== EN SIK ISLEM ANALIZI ==========" << endl;
     cout << "EKLE: " << ekle << endl;
     cout << "SIL: " << sil << endl;
     cout << "GUNCELLE: " << guncelle << endl;
     cout << "DEQUEUE: " << dequeue << endl;
-    cout << "En sik islem: " << enSik << " (" << enYuksek << " adet)" << endl;
+    cout << "En sik islem(ler): " << enSikListe << " (" << enYuksek << " adet)" << endl;
     cout << "==========================================" << endl;
 }
 
