@@ -21,8 +21,8 @@ void girisBoslukluYazdir(int seviye);
 //kayitlari yil/ay bazli filtrele
 AgacDugumu* tariheGoreAgacOlustur(Kayit* bas);
 void tariheGoreAgacListele(AgacDugumu* kok);
-void yilaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil);
-void ayaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, const string& ay);
+void yilaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, int& sayac);
+void ayaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, const string& ay, int& sayac);
 void tariheGoreFiltrele(AgacDugumu* kok);
  
 //yuksek oncelikli kayitlar ustte

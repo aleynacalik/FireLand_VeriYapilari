@@ -85,35 +85,37 @@ void tariheGoreAgacListele(AgacDugumu* kok) {
 // YIL BAZLI FILTRELEME:
 // Inorder gezinti yaparak sadece istenen yila ait kayitlari ekrana yazar.
 // Tüm düğümleri gezer,O(N) karmasiklik
-void yilaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil) {
+void yilaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, int& sayac) {
     if (kok == NULL) return;
-    yilaGoreFiltreleYazdir(kok->sol, yil);        // Sol alt agaci gez
+    yilaGoreFiltreleYazdir(kok->sol, yil, sayac);
     string kayitYili = kok->kayit->tarih.substr(6, 4);
-    if (kayitYili == yil) {                     
+    if (kayitYili == yil) {
         cout << "  [" << kok->kayit->tarih.substr(0,10) << "]"
              << "  ID:" << kok->kayit->id
              << "  " << kok->kayit->baslik
              << "  (" << kok->kayit->kategori << ")"
              << "  Puan:" << kok->kayit->ortalamaPuan << "/5.0" << endl;
+        sayac++;
     }
-    yilaGoreFiltreleYazdir(kok->sag, yil);   
+    yilaGoreFiltreleYazdir(kok->sag, yil, sayac);
 }
  
 // AY BAZLI FILTRELEME:
 // Inorder gezinti ile hem yil hem ay eslesmesi aranan kayitlari yazdirir.
-void ayaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, const string& ay) {
+void ayaGoreFiltreleYazdir(AgacDugumu* kok, const string& yil, const string& ay, int& sayac) {
     if (kok == NULL) return;
-    ayaGoreFiltreleYazdir(kok->sol, yil, ay);
-    string kayitAy  = kok->kayit->tarih.substr(3, 2); // AA
-    string kayitYil = kok->kayit->tarih.substr(6, 4); // YYYY
+    ayaGoreFiltreleYazdir(kok->sol, yil, ay, sayac);
+    string kayitAy  = kok->kayit->tarih.substr(3, 2);
+    string kayitYil = kok->kayit->tarih.substr(6, 4);
     if (kayitYil == yil && kayitAy == ay) {
         cout << "  [" << kok->kayit->tarih.substr(0,10) << "]"
              << "  ID:" << kok->kayit->id
              << "  " << kok->kayit->baslik
              << "  (" << kok->kayit->kategori << ")"
              << "  Puan:" << kok->kayit->ortalamaPuan << "/5.0" << endl;
+        sayac++;
     }
-    ayaGoreFiltreleYazdir(kok->sag, yil, ay);
+    ayaGoreFiltreleYazdir(kok->sag, yil, ay, sayac);
 }
  
 // Kullaniciya secim sunarak yil veya ay bazli filtreleme saglar
@@ -124,8 +126,8 @@ void tariheGoreFiltrele(AgacDugumu* kok) {
     }
  
     cout << "\n--- TARIH BAZLI FILTRELEME ---" << endl;
-    cout << "1. Yil bazli filtrele  (ornek: 2025)" << endl;
-    cout << "2. Ay bazli filtrele   (ornek: Nisan 2025)" << endl;
+    cout << "1. Yil bazli filtrele" << endl;
+    cout << "2. Ay bazli filtrele " << endl;
     cout << "Seciminiz: ";
  
     int secim;
@@ -135,13 +137,12 @@ void tariheGoreFiltrele(AgacDugumu* kok) {
     if (secim == 1) {
         cout << "Yil girin (YYYY): ";
         string yil;
-        cin >> yil; cin.ignore();
+        cin >> yil; cin.ignore(); //manuel kullancı girisli yıl bilgisi
  
         cout << "\n========== " << yil << " YILINA AIT KAYITLAR ==========" << endl;
         int sayac = 0;
-
-        yilaGoreFiltreleYazdir(kok, yil);
-
+        yilaGoreFiltreleYazdir(kok, yil, sayac);
+        if (sayac == 0) cout << "  [BILGI] Bu yila ait kayit bulunamadi!" << endl;
         cout << "=================================================" << endl;
  
     } else if (secim == 2) {
@@ -164,7 +165,9 @@ void tariheGoreFiltrele(AgacDugumu* kok) {
         string ayAdiStr = (ayInt >= 1 && ayInt <= 12) ? ayAdi[ayInt] : "?";
  
         cout << "\n========== " << ayAdiStr << " " << yil << " KAYITLARI ==========" << endl;
-        ayaGoreFiltreleYazdir(kok, yil, ay);
+        int sayac = 0;
+        ayaGoreFiltreleYazdir(kok, yil, ay, sayac);
+        if (sayac == 0) cout << "  [BILGI] Bu ay/yila ait kayit bulunamadi!" << endl;
         cout << "=================================================" << endl;
  
     } else {
