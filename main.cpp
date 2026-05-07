@@ -136,14 +136,6 @@ int main() {
     SikistirmaSonucu huffmanSonuc, lzwSonuc, sfSonuc;
     Oncelik oncelik;
 
-    // Hoşgeldin mesajı
-    cout << "================================================" << endl;
-    cout << "   EDUFLOW - Dijital Egitim Platformu" << endl;
-    cout << "   Veri Yapilari Projesi (ISE 106)" << endl;
-    cout << "   Modul 1: Ana Kayit Yonetimi" << endl;
-    cout << "   Modul 2: Operasyon Gunlugu" << endl;
-    cout << "================================================" << endl;
-
     do {
         anaMenuGoster();
         secim = intSec("", 0, 8);

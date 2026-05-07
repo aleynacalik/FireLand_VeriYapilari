@@ -54,12 +54,12 @@ void enEski10Kayit(Kayit* bas);
 Kayit* kritikNotEkle(Kayit* bas, LogKaydi** logBas, int id, string not_);
 void kritikKayitlariListele(Kayit* bas);
 
-// Arşiv işlemleri
+
 Kayit* kayitArsivle(Kayit* bas, LogKaydi** logBas, int id);
 Kayit* arsivdenCikar(Kayit* bas, LogKaydi** logBas, int id);
 void arsivdekiKayitlariListele(Kayit* bas);
 
-// İşleme alma / tamamlama (revize akışı)
+
 Kayit* kaydiIslemeAl(Kayit* bas, LogKaydi** logBas, int id);
 Kayit* islemiTamamla(Kayit* bas, LogKaydi** logBas, int id);
 

@@ -76,7 +76,7 @@ void kayitYazdir(Kayit* k) {
 Kayit* kayitEkle(Kayit* bas, LogKaydi** logBas, string baslik, string kategori, 
                  float boyut, Oncelik oncelik, float puan) {
     
-    // Yeni düğüm oluştur
+    
     Kayit* yeniKayit = new Kayit();
     sonKayitID++;
     yeniKayit->id = sonKayitID;
@@ -281,7 +281,7 @@ void enEski10Kayit(Kayit* bas) {
         iter = iter->next;
     }
 
-    // Tarihe gore eskiden yeniye sirala (bubble sort)
+    
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (tarihiSiralanabilirYap(dizi[j]->tarih) > tarihiSiralanabilirYap(dizi[j+1]->tarih)) {
@@ -473,14 +473,14 @@ Kayit* demoVerilerEkle(Kayit* bas, LogKaydi** logBas) {
     bas = kayitEkle(bas, logBas, "Ingilizce Konusma", "Dil", 1200.0, YUKSEK, 4.5);
     bas = kayitEkle(bas, logBas, "Gitar Dersleri", "Muzik", 600.0, ORTA, 4.0);
 
-    // Yeni eklenen son 5 kaydı bul ve tarihlerini override et
+    
     Kayit* iter = bas;
     int sira = 0;
     while (iter != NULL) {
         if (sira >= eskiSayi && sira < eskiSayi + 5) {
             iter->tarih = tarihler[sira - eskiSayi];
 
-            // Demo simulasyonu: ilgili EKLE log kaydinin tarihini de kayitla esitle
+            // Demo simulasyonu ilgili ekle log kaydinin tarihini de kayitla esitle
             if (*logBas != NULL) {
                 LogKaydi* lit = *logBas;
                 do {

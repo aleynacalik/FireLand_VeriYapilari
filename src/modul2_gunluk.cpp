@@ -48,7 +48,7 @@ bool tarihGecerliMi(string tarih) {
         return false;
     }
 
-    // Ayraç "/" veya "." olabilir; ikisi de tutarli olmali
+    // Ayraç "/" veya "." olabilir
     char ayrac = tarih[2];
     if ((ayrac != '/' && ayrac != '.') || tarih[5] != ayrac) {
         return false;
@@ -56,7 +56,7 @@ bool tarihGecerliMi(string tarih) {
 
 
     for (int i = 0; i < 10; i++) {
-        if (i == 2 || i == 5) continue; // ayrac karakterleri
+        if (i == 2 || i == 5) continue; 
         if (tarih[i] < '0' || tarih[i] > '9') {
             return false;
         }
@@ -165,7 +165,7 @@ void kayitIdIslemleriniListele(LogKaydi* bas, int kayitID) {
 
 void tarihAraligiIslemler(LogKaydi* bas, string baslangic, string bitis) {
     
-     // Tarih format kontrolü
+    
     if (!tarihGecerliMi(baslangic)) {
         cout << "[HATA] Baslangic tarihi gecersiz! Format: GG/AA/YYYY" << endl;
         cout << "       Ornek: 01/04/2026" << endl;
@@ -178,7 +178,7 @@ void tarihAraligiIslemler(LogKaydi* bas, string baslangic, string bitis) {
         return;
     }
     
-    // Başlangıç <= Bitiş kontrolü
+    
     if (!tarihSiralamaGecerliMi(baslangic, bitis)) {
         cout << "[HATA] Baslangic tarihi, bitis tarihinden sonra olamaz!" << endl;
         return;
@@ -222,7 +222,7 @@ void gunlukRaporuOlustur(LogKaydi* bas, Kayit* kayitBas) {
         return;
     }
 
-    // 1. İşlem türü ve sıklık
+    
     int toplam = 0;
     int ekleSayisi = 0, silSayisi = 0, guncelleSayisi = 0, dequeueSayisi = 0;
 
@@ -250,7 +250,7 @@ void gunlukRaporuOlustur(LogKaydi* bas, Kayit* kayitBas) {
     cout << "DEQUEUE:  " << dequeueSayisi << " adet ("
          << (toplam > 0 ? (dequeueSayisi * 100 / toplam) : 0) << "%)" << endl;
 
-    // 2. Kritik kayıt analizi
+    
     cout << "\n--- KRITIK KAYIT ANALIZI ---" << endl;
 
     if (kayitBas == NULL) {

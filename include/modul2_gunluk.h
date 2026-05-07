@@ -17,7 +17,7 @@ using namespace std;
 
 enum IslemTuru { EKLE = 0, SIL = 1, GUNCELLE = 2, DEQUEUE = 3 };
 
-// Kritik kayıt analizi için forward declaration (Modül 1)
+
 struct Kayit;
 
 

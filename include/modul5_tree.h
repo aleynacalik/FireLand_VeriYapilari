@@ -45,7 +45,7 @@ void puanAraligiFiltrele(Kayit* bas, float minPuan, float maxPuan);
 int agacYuksekligi(AgacDugumu* kok);
 void agacPerformansBilgisi(AgacDugumu* kok);
  
-// 5. 2020 tarihi icin oncesi/sonrasi analiz (EduFlow'a uygun: COVID donemini baz alir)
+// 5. 2020 tarihi icin oncesi/sonrasi analiz 
 void tarihBazliTrendAnalizi(Kayit* bas, int yil);
  
 #endif
