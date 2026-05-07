@@ -26,15 +26,18 @@ void loglardanStackGuncelle(StackIslem** ust, LogKaydi* logBas, int* sonIslenenL
     LogKaydi* iter = logBas;
     bool yeniIslemVar = false;
 
+    // Log listesi dairesel oldugu icin do-while ile bir tur tam dolasilir.
     do {
         if (iter->logID > *sonIslenenLogID &&
             (iter->islemTuru == EKLE || iter->islemTuru == SIL || iter->islemTuru == GUNCELLE)) {
+            // Undo icin yalnizca geri alinabilir temel operasyonlar stack'e tasinir.
             stackeIslemPush(ust, iter->islemTuru, iter->kayitID, iter->oncekiDeger, iter->yeniDeger, iter->tarihSaat);
             yeniIslemVar = true;
         }
         iter = iter->next;
     } while (iter != logBas);
 
+    // Bir sonraki guncellemede ayni loglari tekrar tasimamak icin son islenen ID saklanir.
     if (logBas->prev != NULL) {
         *sonIslenenLogID = logBas->prev->logID;
     }
@@ -52,12 +55,14 @@ void undoPop(StackIslem** ust, Kayit** kayitBas, LogKaydi** logBas) {
         return;
     }
 
+    // LIFO: en son eklenen islem geri alinir.
     StackIslem* silinecek = *ust;
     *ust = (*ust)->next;
 
     cout << "\n[UNDO] Geri aliniyor -> Kayit ID: " << silinecek->kayitID << endl;
 
     if (silinecek->tur == EKLE) {
+        // EKLE'nin tersi SIL'dir.
         *kayitBas = kayitSil(*kayitBas, logBas, silinecek->kayitID);
         cout << "[UNDO] EKLE islemi geri alindi (kayit silindi)." << endl;
     } else if (silinecek->tur == GUNCELLE) {
@@ -69,6 +74,7 @@ void undoPop(StackIslem** ust, Kayit** kayitBas, LogKaydi** logBas) {
             cout << "[UNDO] GUNCELLE islemi geri alindi." << endl;
         }
     } else if (silinecek->tur == SIL) {
+        // SIL'in tersi: kaydi logdaki oncekiDeger bilgisinden yeniden olusturmak.
         if (silinecek->oncekiDeger.empty()) {
             cout << "[HATA] SIL islemi icin oncekiDeger bos, geri alinamiyor." << endl;
         } else {
@@ -86,6 +92,7 @@ void undoPop(StackIslem** ust, Kayit** kayitBas, LogKaydi** logBas) {
             getline(ss, puanStr, '|');
             getline(ss, kritikNot, '|');
 
+            // Zorunlu alanlar eksikse guvenli sekilde geri yukleme iptal edilir.
             if (idStr.empty() || baslik.empty() || kategori.empty() || boyutStr.empty()
                 || tarih.empty() || oncelikStr.empty() || durumStr.empty() || puanStr.empty()) {
                 cout << "[HATA] SIL islemi undo icin log verisi eksik." << endl;
@@ -101,6 +108,7 @@ void undoPop(StackIslem** ust, Kayit** kayitBas, LogKaydi** logBas) {
                 yeni->ortalamaPuan = stof(puanStr);
                 yeni->kritikNot = kritikNot;
 
+                // Mevcut yapida geri yuklenen kayit listenin basina eklenir.
                 yeni->next = *kayitBas;
                 *kayitBas = yeni;
 
@@ -158,6 +166,7 @@ void enSikIslemTuruAnalizi(StackIslem* ust) {
         iter = iter->next;
     }
 
+    // En yuksek frekans bulunur; esitse birden fazla islem "en sik" olabilir.
     int enYuksek = ekle;
     if (sil > enYuksek) enYuksek = sil;
     if (guncelle > enYuksek) enYuksek = guncelle;
