@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-
+// Modul 7: Kayitlardan uretilen ham veri uzerinde sikistirma analizleri yapar.
 namespace {
 struct HuffmanDugum {
     char ch;
@@ -13,7 +13,7 @@ struct HuffmanDugum {
     HuffmanDugum* sol;
     HuffmanDugum* sag;
 };
-
+// Verilen karakter ve frekans ile yeni bir Huffman dugumu uretir.
 HuffmanDugum* huffmanDugumOlustur(char ch, int frekans) {
     HuffmanDugum* dugum = new HuffmanDugum();
     dugum->ch = ch;
@@ -22,14 +22,14 @@ HuffmanDugum* huffmanDugumOlustur(char ch, int frekans) {
     dugum->sag = NULL;
     return dugum;
 }
-
+// Huffman agacini post-order dolasip tum dugumleri serbest birakir.
 void huffmanTemizle(HuffmanDugum* kok) {
     if (kok == NULL) return;
     huffmanTemizle(kok->sol);
     huffmanTemizle(kok->sag);
     delete kok;
 }
-
+// Huffman agacindaki yapraklara ulasip bit kodlarini tabloya yazar.
 void huffmanKodOlustur(HuffmanDugum* kok, const string& kod, string kodTablosu[256]) {
     if (kok == NULL) return;
     if (kok->sol == NULL && kok->sag == NULL) {
@@ -40,7 +40,7 @@ void huffmanKodOlustur(HuffmanDugum* kok, const string& kod, string kodTablosu[2
     huffmanKodOlustur(kok->sol, kod + "0", kodTablosu);
     huffmanKodOlustur(kok->sag, kod + "1", kodTablosu);
 }
-
+// Shannon-Fano adiminda frekanslari buyukten kucuge siralar.
 void frekansSiralaAzalan(KarakterFrekansi dizi[], int n) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
@@ -52,7 +52,7 @@ void frekansSiralaAzalan(KarakterFrekansi dizi[], int n) {
         }
     }
 }
-
+// Geçici havuzdan en dusuk frekansli dugumu cekip birlestirmede kullanir.
 HuffmanDugum* enKucukDugumuCikar(HuffmanDugum* havuz[], int* adet) {
     if (*adet <= 0) return NULL;
     int minIndex = 0;
@@ -64,7 +64,7 @@ HuffmanDugum* enKucukDugumuCikar(HuffmanDugum* havuz[], int* adet) {
     (*adet)--;
     return secilen;
 }
-
+// Shannon-Fano icin veri grubunu dengeye yakin iki alt gruba boler.
 void shannonFanoRekursif(KarakterFrekansi veriler[], int sol, int sag, string kodTablosu[256]) {
     if (sol >= sag) return;
 
@@ -98,7 +98,7 @@ void shannonFanoRekursif(KarakterFrekansi veriler[], int sol, int sag, string ko
     shannonFanoRekursif(veriler, sol, bolme, kodTablosu);
     shannonFanoRekursif(veriler, bolme + 1, sag, kodTablosu);
 }
-
+// Ortak sonuc formatini tek yerde olusturarak tekrar eden hesaplari toplar.
 SikistirmaSonucu sonucOlustur(const string& ad, int orijinalBit, int sikismisBit, double sureMs) {
     SikistirmaSonucu sonuc;
     sonuc.algoritmaAdi = ad;
@@ -120,7 +120,7 @@ string kayitlardanHamVeriUret(Kayit* bas) {
     }
     return veri;
 }
-
+// Metindeki karakter frekanslarini hesaplayip buyukten kucuge siralar.
 int frekansAnalizi(const string& veri, KarakterFrekansi frekanslar[], int maxBoyut) {
     int sayac[256];
     for (int i = 0; i < 256; i++) sayac[i] = 0;
@@ -155,7 +155,7 @@ void frekansTablosuYazdir(KarakterFrekansi frekanslar[], int adet) {
     }
     cout << "=====================================" << endl;
 }
-
+// Huffman agaci olusturup tahmini sikistirilmis bit boyutunu hesaplar.
 SikistirmaSonucu huffmanSikistir(const string& veri) {
     clock_t t0 = clock();
     if (veri.empty()) {
@@ -195,7 +195,7 @@ SikistirmaSonucu huffmanSikistir(const string& veri) {
     double ms = 1000.0 * (t1 - t0) / CLOCKS_PER_SEC;
     return sonucOlustur("Huffman", orijinalBit, sikismisBit, ms);
 }
-
+// LZW sozluk temelli kodlama ile sikistirma oranini ve sureyi olcer.
 SikistirmaSonucu lzwSikistir(const string& veri) {
     clock_t t0 = clock();
     if (veri.empty()) {
@@ -259,7 +259,7 @@ SikistirmaSonucu lzwSikistir(const string& veri) {
     double ms = 1000.0 * (t1 - t0) / CLOCKS_PER_SEC;
     return sonucOlustur("LZW", orijinalBit, sikismisBit, ms);
 }
-
+// Shannon-Fano bol-parcala yaklasimi ile kodlar ve cikti boyutunu hesaplar.
 SikistirmaSonucu shannonFanoSikistir(const string& veri) {
     clock_t t0 = clock();
     if (veri.empty()) {
@@ -288,7 +288,7 @@ SikistirmaSonucu shannonFanoSikistir(const string& veri) {
     double ms = 1000.0 * (t1 - t0) / CLOCKS_PER_SEC;
     return sonucOlustur("Shannon-Fano", orijinalBit, sikismisBit, ms);
 }
-
+// Tek algoritma sonucunu okunabilir bir blok halinde ekrana basar.
 void sikistirmaSonucuYazdir(const SikistirmaSonucu& sonuc) {
     cout << "\n========== " << sonuc.algoritmaAdi << " SONUCU ==========" << endl;
     cout << "Orijinal Boyut      : " << fixed << setprecision(4) << sonuc.orijinalKB << " KB" << endl;
@@ -298,7 +298,7 @@ void sikistirmaSonucuYazdir(const SikistirmaSonucu& sonuc) {
     cout << "Sure                : " << fixed << setprecision(3) << sonuc.sureMs << " ms" << endl;
     cout << "======================================" << endl;
 }
-
+// Uc sikistirma algoritmasini ayni tabloda karsilastirmali sunar.
 void sikistirmaKarsilastirmaYazdir(const SikistirmaSonucu& a, const SikistirmaSonucu& b, const SikistirmaSonucu& c) {
     cout << "\n========== SIKISTIRMA KARSILASTIRMASI ==========" << endl;
     cout << left << setw(16) << "Algoritma"
