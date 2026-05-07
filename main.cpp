@@ -392,19 +392,17 @@ int main() {
                     switch (altSecim) {
                         case 1:
                             cout << "Baslik: "; getline(cin, baslik);
-                            cout << "Kategori: "; getline(cin, kategori);
-                            cout << "Boyut (KB): "; cin >> boyut;
-                            cout << "Oncelik (0=Dusuk, 1=Orta, 2=Yuksek): "; cin >> oncelikInt;
-                            cout << "Ortalama Puan (0-5): "; cin >> puan;
-                            cin.ignore();
+                            kategori = kategoriSec();
+                            boyut = floatSec("Boyut (KB): ", 0.0, 1e9);
+                            oncelikInt = intSec("Oncelik (0=Dusuk, 1=Orta, 2=Yuksek): ", 0, 2);
+                            puan = puanSec();
                             yeniTalepEkle(&talepBas, kategori, boyut, (Oncelik)oncelikInt, baslik, puan);
                             break;
                         case 2:
                             cout << "Baslik: "; getline(cin, baslik);
-                            cout << "Kategori: "; getline(cin, kategori);
-                            cout << "Boyut (KB): "; cin >> boyut;
-                            cout << "Ortalama Puan (0-5): "; cin >> puan;
-                            cin.ignore();
+                            kategori = kategoriSec();
+                            boyut = floatSec("Boyut (KB): ", 0.0, 1e9);
+                            puan = puanSec();
                             oncelikliTalepOlustur(&talepBas, kategori, boyut, baslik, puan);
                             break;
                         case 3:
