@@ -5,15 +5,16 @@
 #include <iostream>
 
 using namespace std;
-
+// Modul 8: Erisim ve sure metriklerini toplayip performans karsilastirmasi sunar.
 namespace {
+// Dogrusal arama: sirasiz dizide hedef ID'yi basi sona tarar.
 int linearSearchID(int dizi[], int adet, int hedef) {
     for (int i = 0; i < adet; i++) {
         if (dizi[i] == hedef) return static_cast<int>(i);
     }
     return -1;
 }
-
+// Ikili arama: sirali dizide ortadan bolerek hedefi arar.
 int binarySearchID(int dizi[], int adet, int hedef) {
     int l = 0;
     int r = adet - 1;
@@ -26,13 +27,13 @@ int binarySearchID(int dizi[], int adet, int hedef) {
     return -1;
 }
 }  // namespace
-
+// Performans durumunu temiz baslangic degerleriyle hazirlar
 void performansDurumuBaslat(PerformansDurumu* durum) {
     durum->erisimSayisi = 0;
     for (int i = 0; i < 10; i++) durum->son10Erisim[i] = -1;
     durum->olcumBas = NULL;
 }
-
+// Olcum bagli listesini tamamen serbest birakir.
 void performansDurumuTemizle(PerformansDurumu* durum) {
     PerformansOlcumu* iter = durum->olcumBas;
     while (iter != NULL) {
@@ -42,7 +43,7 @@ void performansDurumuTemizle(PerformansDurumu* durum) {
     }
     durum->olcumBas = NULL;
 }
-
+// Son 10 erisimi halka benzeri kaydirma mantigiyla gunceller
 void erisimKaydet(PerformansDurumu* durum, int kayitID) {
     if (durum->erisimSayisi < 10) {
         durum->son10Erisim[durum->erisimSayisi] = kayitID;
@@ -55,7 +56,7 @@ void erisimKaydet(PerformansDurumu* durum, int kayitID) {
     }
     durum->son10Erisim[9] = kayitID;
 }
-
+// Son erisimleri en guncelden eskiye dogru ekrana yazar.
 void son10ErisimYazdir(const PerformansDurumu* durum) {
     cout << "\n========== SON 10 ERISILEN KAYIT ==========" << endl;
     if (durum->erisimSayisi == 0) {
@@ -69,7 +70,7 @@ void son10ErisimYazdir(const PerformansDurumu* durum) {
     }
     cout << "===========================================" << endl;
 }
-
+// Yeni bir sure olcumunu bagli listenin basina ekler.
 void olcumEkle(PerformansDurumu* durum, const string& etiket, double sureMs) {
     PerformansOlcumu* yeni = new PerformansOlcumu();
     yeni->etiket = etiket;
@@ -77,7 +78,7 @@ void olcumEkle(PerformansDurumu* durum, const string& etiket, double sureMs) {
     yeni->next = durum->olcumBas;
     durum->olcumBas = yeni;
 }
-
+// Kaydedilen tum olcumleri etiket/sure formatinda listeler.
 void tumOlcumleriYazdir(const PerformansDurumu* durum) {
     cout << "\n========== ISLEM SURELERI (MS) ==========" << endl;
     if (durum->olcumBas == NULL) {
@@ -94,7 +95,7 @@ void tumOlcumleriYazdir(const PerformansDurumu* durum) {
     }
     cout << "=========================================" << endl;
 }
-
+// Kaydedilen olcumleri etiket bazinda ortalama sureye cevirerek raporlar.
 void ortalamaSureleriYazdir(const PerformansDurumu* durum) {
     cout << "\n========== MODUL BAZLI ORTALAMA ==========" << endl;
     if (durum->olcumBas == NULL) {
@@ -137,7 +138,7 @@ void ortalamaSureleriYazdir(const PerformansDurumu* durum) {
     }
     cout << "==========================================" << endl;
 }
-
+// Ortalama surelere gore en hizli olculen yapi/algoritmayi onerir.
 void enHizliYapiOner(const PerformansDurumu* durum) {
     if (durum->olcumBas == NULL) {
         cout << "[BILGI] Oneri icin yeterli olcum yok." << endl;
@@ -185,7 +186,7 @@ void enHizliYapiOner(const PerformansDurumu* durum) {
     cout << "Ortalama sure: " << fixed << setprecision(3) << minOrt << " ms" << endl;
     cout << "==========================================" << endl;
 }
-
+// Ayni hedef ID icin linear ve binary search surelerini olcer.
 void linearBinaryKarsilastir(Kayit* bas, int hedefID, PerformansDurumu* durum) {
     if (bas == NULL) {
         cout << "[BILGI] Kayit listesi bos." << endl;
