@@ -128,34 +128,6 @@ int kategoriyeSayiBul(HashTablosu* ht, const string& kategori) {
     return sayac;
 }
 
-// Belirli kategoriye ait kayıtları listele
-void kategoriyeGoreKayitlariListele(HashTablosu* ht, const string& kategori) {
-    if (ht == NULL) {
-        cout << "[BILGI] Hash tablosu bos." << endl;
-        return;
-    }
-    
-    int sayac = 0;
-    cout << "\n========== KATEGORI: " << kategori << " ==========" << endl;
-    cout << "ID   | Baslik              | Puan  | Oncelik" << endl;
-    cout << "--------------------------------------------------" << endl;
-    
-    for (int i = 0; i < ht->boyut; i++) {
-        HashDugumu* iter = ht->table[i];
-        while (iter != NULL) {
-            if (iter->kayit->kategori == kategori) {
-                cout << left << setw(4) << iter->kayit->id << " | "
-                     << setw(19) << iter->kayit->baslik << " | "
-                     << fixed << setprecision(1) << setw(4) << iter->kayit->ortalamaPuan << " | "
-                     << oncelikToString(iter->kayit->oncelik) << endl;
-                sayac++;
-            }
-            iter = iter->next;
-        }
-    }
-    cout << "================================================" << endl;
-    cout << "Toplam: " << sayac << " kayit" << endl;
-}
 
 // Tüm kategorileri analiz et ve özet göster
 void tumKategorileriAnaliz(HashTablosu* ht) {

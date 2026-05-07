@@ -424,8 +424,8 @@ int main() {
                     cout << "4. Agac yuksekligi ve performans bilgisi" << endl;
                     cout << "5. Tarih bazli trend analizi" << endl;
                     cout << "0. Ana menuye don" << endl;
-                    cout << "Seciminiz: ";
-                    cin >> altSecim; cin.ignore();
+                    altSecim = intSec("Seciminiz: ", 0, 5);
+                    cin.ignore();
 
                     switch (altSecim) {
                         case 1:
@@ -508,8 +508,8 @@ int main() {
                     cout << "5. Oncelik bazli yogunluk analizi" << endl;
                     cout << "6. Hash tablo performans bilgisi" << endl;
                     cout << "0. Ana menuye don" << endl;
-                    cout << "Seciminiz: ";
-                    cin >> altSecim; cin.ignore();
+                    altSecim = intSec("Seciminiz: ", 0, 6);
+                    cin.ignore();
 
                     switch (altSecim) {
                         case 1:
@@ -527,7 +527,7 @@ int main() {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
                                 break;
                             }
-                            cout << "\nKayit ID girin: "; cin >> id;
+                            id = intSec("\nKayit ID girin: ", 1, 999999);
                             cin.ignore();
                             idyeGoreOrtalamaPuanBul(hashTablosu, id);
                             break;
@@ -537,10 +537,19 @@ int main() {
                                 cout << "[BILGI] Hash tablosu bos. Once 'Hash tablosu olustur' secenegini calistirin." << endl;
                                 break;
                             }
-                            cout << "\nKategori (Yazilim/Tasarim/Isletme/Dil/Muzik): ";
-                            getline(cin, kategori);
-                            sayac = kategoriyeSayiBul(hashTablosu, kategori);
-                            cout << "[BILGI] '" << kategori << "' kategorisinde " << sayac << " kayit var." << endl;
+                            {
+                                cout << "\n--- KATEGORI SECIN ---" << endl;
+                                cout << "1. Yazilim" << endl;
+                                cout << "2. Tasarim" << endl;
+                                cout << "3. Isletme" << endl;
+                                cout << "4. Dil" << endl;
+                                cout << "5. Muzik" << endl;
+                                int katSecim = intSec("Seciminiz (1-5): ", 1, 5);
+                                string katList[] = {"Yazilim", "Tasarim", "Isletme", "Dil", "Muzik"};
+                                kategori = katList[katSecim - 1];
+                                sayac = kategoriyeSayiBul(hashTablosu, kategori);
+                                cout << "[BILGI] '" << kategori << "' kategorisinde " << sayac << " kayit var." << endl;
+                            }
                             break;
 
                         case 4:
