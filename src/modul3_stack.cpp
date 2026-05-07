@@ -1,6 +1,7 @@
 #include "../include/modul3_stack.h"
 
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -68,8 +69,44 @@ void undoPop(StackIslem** ust, Kayit** kayitBas, LogKaydi** logBas) {
             cout << "[UNDO] GUNCELLE islemi geri alindi." << endl;
         }
     } else if (silinecek->tur == SIL) {
-        cout << "[UYARI] SIL islemini tam geri almak icin tum kayit detayi gerekli." << endl;
-        cout << "        Mevcut log verisi yetersiz oldugu icin otomatik geri alma yapilmadi." << endl;
+        if (silinecek->oncekiDeger.empty()) {
+            cout << "[HATA] SIL islemi icin oncekiDeger bos, geri alinamiyor." << endl;
+        } else {
+            string veri = silinecek->oncekiDeger;
+            stringstream ss(veri);
+            string idStr, baslik, kategori, boyutStr, tarih, oncelikStr, durumStr, puanStr, kritikNot;
+
+            getline(ss, idStr, '|');
+            getline(ss, baslik, '|');
+            getline(ss, kategori, '|');
+            getline(ss, boyutStr, '|');
+            getline(ss, tarih, '|');
+            getline(ss, oncelikStr, '|');
+            getline(ss, durumStr, '|');
+            getline(ss, puanStr, '|');
+            getline(ss, kritikNot, '|');
+
+            if (idStr.empty() || baslik.empty() || kategori.empty() || boyutStr.empty()
+                || tarih.empty() || oncelikStr.empty() || durumStr.empty() || puanStr.empty()) {
+                cout << "[HATA] SIL islemi undo icin log verisi eksik." << endl;
+            } else {
+                Kayit* yeni = new Kayit();
+                yeni->id = stoi(idStr);
+                yeni->baslik = baslik;
+                yeni->kategori = kategori;
+                yeni->boyut = stof(boyutStr);
+                yeni->tarih = tarih;
+                yeni->oncelik = static_cast<Oncelik>(stoi(oncelikStr));
+                yeni->durum = static_cast<Durum>(stoi(durumStr));
+                yeni->ortalamaPuan = stof(puanStr);
+                yeni->kritikNot = kritikNot;
+
+                yeni->next = *kayitBas;
+                *kayitBas = yeni;
+
+                cout << "[UNDO] SIL islemi geri alindi (kayit geri yuklendi)." << endl;
+            }
+        }
     } else {
         cout << "[UYARI] Bu islem turu icin undo tanimli degil." << endl;
     }
