@@ -8,6 +8,7 @@ using namespace std;
 int sonTalepID = 0;
 
 int oncelikSkoru(Oncelik o) {
+    // Siralama karsilastirmasi icin enum degerlerini tek bir puana cevirir.
     if (o == YUKSEK) return 3;
     if (o == ORTA) return 2;
     return 1;
@@ -15,6 +16,7 @@ int oncelikSkoru(Oncelik o) {
 
 time_t stringiTimeTyeCevir(string tarihSaat) {
     tm zaman = {};
+    // Beklenen format: "GG/AA/YYYY SS:DD:SS"
     if (tarihSaat.length() >= 19) {
         zaman.tm_mday = (tarihSaat[0] - '0') * 10 + (tarihSaat[1] - '0');
         zaman.tm_mon = ((tarihSaat[3] - '0') * 10 + (tarihSaat[4] - '0')) - 1;
@@ -46,10 +48,12 @@ void yeniTalepEkle(Talep** bas, string kategori, float boyut, Oncelik oncelik, s
     yeni->puan = puan;
     yeni->next = NULL;
 
+    // Oncelik daha yuksekse talep listenin basina eklenir.
     if (*bas == NULL || oncelikSkoru((*bas)->oncelik) < oncelikSkoru(oncelik)) {
         yeni->next = *bas;
         *bas = yeni;
     } else {
+        // Ayni veya daha dusuk oncelikler arasinda uygun noktaya yerlestirilir.
         Talep* iter = *bas;
         while (iter->next != NULL &&
                oncelikSkoru(iter->next->oncelik) >= oncelikSkoru(oncelik)) {
@@ -63,6 +67,7 @@ void yeniTalepEkle(Talep** bas, string kategori, float boyut, Oncelik oncelik, s
 }
 
 void oncelikliTalepOlustur(Talep** bas, string kategori, float boyut, string baslik, float puan) {
+    // Kisa yol: kullanicidan oncelik almadan dogrudan YUKSEK oncelikli talep olusturur.
     yeniTalepEkle(bas, kategori, boyut, YUKSEK, baslik, puan);
 }
 
@@ -94,9 +99,11 @@ void ilkTalebiIslemeAl(Talep** bas, Kayit** kayitBas, LogKaydi** logBas, StackIs
         return;
     }
 
+    // FIFO/priority akisi: kuyrugun basindaki talep secilir.
     Talep* islenecek = *bas;
     *bas = (*bas)->next;
 
+    // Talep, Modul 1'e kalici kayit olarak aktarilir.
     *kayitBas = kayitEkle(*kayitBas, logBas, islenecek->baslik, islenecek->kategori,
                           islenecek->boyut, islenecek->oncelik, islenecek->puan);
 
@@ -109,6 +116,7 @@ void ilkTalebiIslemeAl(Talep** bas, Kayit** kayitBas, LogKaydi** logBas, StackIs
         yeniKayitID = iter->id;
     }
 
+    // Islem Modul 2 gunlugune ve Modul 3 stack'ine DEQUEUE olarak kaydedilir.
     *logBas = gunlukKaydiEkle(*logBas, DEQUEUE, yeniKayitID, "Talep kuyrugundan", islenecek->baslik);
     stackeIslemPush(stackUst, DEQUEUE, yeniKayitID, "Talep kuyrugundan", islenecek->baslik, logZamani());
 
@@ -128,6 +136,7 @@ float ortalamaBeklemeSuresiDakika(Talep* bas) {
     double toplamDakika = 0.0;
     int sayac = 0;
 
+    // Her talep icin (simdi - talepZamani) farki alinip ortalamasi hesaplanir.
     Talep* iter = bas;
     while (iter != NULL) {
         time_t talepZamani = stringiTimeTyeCevir(iter->talepZamani);
