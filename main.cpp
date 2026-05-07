@@ -721,7 +721,6 @@ int main() {
                     cout << "3. LZW sikistirma analizi" << endl;
                     cout << "4. Shannon-Fano sikistirma analizi" << endl;
                     cout << "5. Uc algoritmayi karsilastir" << endl;
-                    cout << "6. Buyuk kayitlari sikistirma analizi ile arsivle" << endl;
                     cout << "0. Ana menuye don" << endl;
                     cout << "Seciminiz: ";
                     cin >> altSecim; cin.ignore();
@@ -742,19 +741,19 @@ int main() {
                         case 2:
                             huffmanSonuc = huffmanSikistir(hamVeri);
                             sikistirmaSonucuYazdir(huffmanSonuc);
-                            secilenYontemOranKarsilastirmaYazdir(huffmanSonuc);
+                            //secilenYontemOranKarsilastirmaYazdir(huffmanSonuc);
                             olcumEkle(&performansDurumu, "Modul7-Huffman", huffmanSonuc.sureMs);
                             break;
                         case 3:
                             lzwSonuc = lzwSikistir(hamVeri);
                             sikistirmaSonucuYazdir(lzwSonuc);
-                            secilenYontemOranKarsilastirmaYazdir(lzwSonuc);
+                            //secilenYontemOranKarsilastirmaYazdir(lzwSonuc);
                             olcumEkle(&performansDurumu, "Modul7-LZW", lzwSonuc.sureMs);
                             break;
                         case 4:
                             sfSonuc = shannonFanoSikistir(hamVeri);
                             sikistirmaSonucuYazdir(sfSonuc);
-                            secilenYontemOranKarsilastirmaYazdir(sfSonuc);
+                            //secilenYontemOranKarsilastirmaYazdir(sfSonuc);
                             olcumEkle(&performansDurumu, "Modul7-ShannonFano", sfSonuc.sureMs);
                             break;
                         case 5:
@@ -766,17 +765,6 @@ int main() {
                             olcumEkle(&performansDurumu, "Modul7-LZW", lzwSonuc.sureMs);
                             olcumEkle(&performansDurumu, "Modul7-ShannonFano", sfSonuc.sureMs);
                             break;
-                        case 6:
-                        {
-                            float esikKB = floatSec("Arsivleme esik boyutu (KB): ", 0.0, 1e9);
-                            int yontemSecimi = intSec("Yontem (1=Huffman, 2=LZW, 3=Shannon-Fano): ", 1, 3);
-                            clock_t t0 = clock();
-                            int arsivlenen = buyukKayitlariArsivle(kayitBas, &logBas, esikKB, yontemSecimi);
-                            clock_t t1 = clock();
-                            olcumEkle(&performansDurumu, "Modul7-Arsivleme", 1000.0 * (t1 - t0) / CLOCKS_PER_SEC);
-                            cout << "[BILGI] Toplam arsivlenen kayit: " << arsivlenen << endl;
-                            break;
-                        }
                         case 0: break;
                         default: cout << "[HATA] Gecersiz secim!" << endl;
                     }
